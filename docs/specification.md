@@ -29,6 +29,11 @@ Optional additions we need to make, and where to make them:
 * When allocating and deallocating pseudo IMSIs, the HLR flushes information in
   the VLR related to them, so an old TMSI does not point to the wrong pseudo
   IMSI.
+* The SIM applet registers EVENT_DOWNLOAD_LOCATION_STATUS, uses it to count the
+  location updates that were done with the same pseudo IMSI, and warns the user
+  if the pseudo IMSI did not change over several location updates. This means,
+  that for some reason, the SMS from the HLR are not arriving (e.g. because an
+  attacker is blocking them).
 
 TODO:
 * extend the list above with the exact sections of the spec, where the new
@@ -36,3 +41,4 @@ TODO:
 * Is there a spec for SIM applets, or do we put the SIM applet behaviour in the
   regular spec for SIM cards, or mention its behavior in the location update
   related change?
+* describe everything in detail, fill in the full contents for the SMS etc.
