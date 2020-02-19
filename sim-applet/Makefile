@@ -1,4 +1,4 @@
-SIMTOOLS_DIR    = ../sim-tools
+SIMTOOLS_DIR    = ../../sim-tools
 
 APPLET_AID      = 0xd0:0x70:0x02:0xca:0x44:0x90:0x01:0x01
 APPLET_NAME     = org.toorcamp.HelloSTK.HelloSTK
