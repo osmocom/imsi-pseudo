@@ -13,6 +13,8 @@ the next pseudo IMSI and sends it as SMS to the SIM. The SIM applet overwrites
 its current IMSI with the new one, and uses it in the next location update.
 Afterwards, the HLR will generate the next IMSI and so on.
 
+**FIXME:** details below need updating, see [OS#4400](https://osmocom.org/issues/4400).
+
 ```
 HLR <-> SIM  LOCATION UPDATE, imsi_pseudo=200
 HLR  -> SIM  NEW PSEUDO IMSI REQ, session_id=1, imsi_pseudo=123

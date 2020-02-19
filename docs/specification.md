@@ -1,5 +1,7 @@
 # [WIP] Make IMSI Pseudonymization an optional extension of 3GPP TS
 
+**FIXME:** needs to be updated, see [OS#4400](https://osmocom.org/issues/4400).
+
 Optional additions we need to make, and where to make them:
 
 * Initial provisioning of the SIM: can optionally have a pseudo IMSI
