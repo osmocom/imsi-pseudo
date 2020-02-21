@@ -16,7 +16,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	// which has a limited number of write cycles.
 	private byte helloMenuItem;
 
-	static byte[] welcomeMsg = new byte[] { '0', 'x', ' ', 'L', 'U' };
+	static byte[] LUCounter = new byte[] { '0', 'x', ' ', 'L', 'U' };
 	static byte[] menuItemText = new byte[] { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
 						  'i', 'z', 'a', 't', 'i', 'o', 'n'};
 
@@ -60,15 +60,15 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		}
 
 		if (event == EVENT_EVENT_DOWNLOAD_LOCATION_STATUS) {
-			welcomeMsg[0]++;
+			LUCounter[0]++;
 			showHello();
 		}
 	}
 
 	private void showHello() {
 		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
-		proHdlr.initDisplayText((byte)0, DCS_8_BIT_DATA, welcomeMsg, (short)0,
-				(short)(welcomeMsg.length));
+		proHdlr.initDisplayText((byte)0, DCS_8_BIT_DATA, LUCounter, (short)0,
+				(short)(LUCounter.length));
 		proHdlr.send();
 		return;
 	}
