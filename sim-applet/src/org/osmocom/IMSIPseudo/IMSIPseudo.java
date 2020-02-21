@@ -1,4 +1,4 @@
-package org.toorcamp.HelloSTK;
+package org.osmocom.IMSIPseudo;
 
 import javacard.framework.APDU;
 import javacard.framework.Applet;
@@ -11,7 +11,7 @@ import sim.toolkit.ToolkitException;
 import sim.toolkit.ToolkitInterface;
 import sim.toolkit.ToolkitRegistry;
 
-public class HelloSTK extends Applet implements ToolkitInterface, ToolkitConstants {
+public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConstants {
 	// DON'T DECLARE USELESS INSTANCE VARIABLES! They get saved to the EEPROM,
 	// which has a limited number of write cycles.
 	private byte helloMenuItem;
@@ -19,10 +19,9 @@ public class HelloSTK extends Applet implements ToolkitInterface, ToolkitConstan
 	static byte[] welcomeMsg = new byte[] { 'W', 'e', 'l', 'c', 'o', 'm', 'e', ' ',
                                             't', 'o', ' ', 'T', 'o', 'o', 'r', 'C',
                                             'a', 'm', 'p', ' ', '2', '0', '1', '2' };
-	
 	static byte[] menuItemText = new byte[] { 'H', 'e', 'l', 'l', 'o', ',', ' ', 'S', 'T', 'K'};
 	
-	private HelloSTK() {
+	private IMSIPseudo() {
 		// This is the interface to the STK applet registry (which is separate
 		// from the JavaCard applet registry!)
 		ToolkitRegistry reg = ToolkitRegistry.getEntry();
@@ -35,7 +34,7 @@ public class HelloSTK extends Applet implements ToolkitInterface, ToolkitConstan
 	// This method is called by the card when the applet is installed. You must
 	// instantiate your applet and register it here.
 	public static void install(byte[] bArray, short bOffset, byte bLength) {
-		HelloSTK applet = new HelloSTK();
+		IMSIPseudo applet = new IMSIPseudo();
 		applet.register();
 	}
 	
