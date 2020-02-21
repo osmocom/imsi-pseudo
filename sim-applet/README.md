@@ -1,8 +1,18 @@
-# Hello World SIM Toolkit Program
+# IMSI Pseudonymization SIM applet
 
-This is the source code to a very simple *Hello World* Java SIM Toolkit
-application.  You typically install it using the tools from the
-<http://git.osmocom.org/sim/sim-tools/> repository.
+### How to flash
 
-For more information see
-<https://osmocom.org/projects/cellular-infrastructure/wiki/Shadysimpy>
+```
+$ cp .sim-keys.example .sim-keys
+$ nvim .sim-keys # adjust KIC1, KID1
+$ make flash
+```
+
+Before flashing a second time, remove the sim applet:
+
+```
+$ make remove
+```
+
+Related:
+* [Shadysimply in Osmocom wiki](https://osmocom.org/projects/cellular-infrastructure/wiki/Shadysimpy)
