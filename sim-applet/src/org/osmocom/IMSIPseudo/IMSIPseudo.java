@@ -16,8 +16,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	// which has a limited number of write cycles.
 	private byte helloMenuItem;
 
-	static byte[] welcomeMsg = new byte[] { 'H', 'e', 'l', 'l', 'o', ',', ' ',
-						'W', 'o', 'r', 'l', 'd', '!' };
+	static byte[] welcomeMsg = new byte[] { '0', 'x', ' ', 'L', 'U' };
 	static byte[] menuItemText = new byte[] { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
 						  'i', 'z', 'a', 't', 'i', 'o', 'n'};
 
@@ -61,9 +60,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		}
 
 		if (event == EVENT_EVENT_DOWNLOAD_LOCATION_STATUS) {
-			/* TODO: count the location updates done with the same
-			 * pseudo IMSI, and warn the user if it becomes too
-			 * high */
+			welcomeMsg[0]++;
 			showHello();
 		}
 	}
