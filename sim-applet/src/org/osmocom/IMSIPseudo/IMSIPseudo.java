@@ -19,7 +19,8 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	static byte[] welcomeMsg = new byte[] { 'W', 'e', 'l', 'c', 'o', 'm', 'e', ' ',
                                             't', 'o', ' ', 'T', 'o', 'o', 'r', 'C',
                                             'a', 'm', 'p', ' ', '2', '0', '1', '2' };
-	static byte[] menuItemText = new byte[] { 'H', 'e', 'l', 'l', 'o', ',', ' ', 'S', 'T', 'K'};
+	static byte[] menuItemText = new byte[] { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
+						  'i', 'z', 'a', 't', 'i', 'o', 'n'};
 
 	private IMSIPseudo() {
 		// This is the interface to the STK applet registry (which is separate
