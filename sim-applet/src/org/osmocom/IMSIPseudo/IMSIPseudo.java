@@ -17,8 +17,8 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	private byte helloMenuItem;
 
 	static byte[] LUCounter = new byte[] { '0', 'x', ' ', 'L', 'U' };
-	static byte[] menuItemText = new byte[] { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
-						  'i', 'z', 'a', 't', 'i', 'o', 'n'};
+	static byte[] title = new byte[] { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
+					   'i', 'z', 'a', 't', 'i', 'o', 'n'};
 
 	private IMSIPseudo() {
 		// This is the interface to the STK applet registry (which is separate
@@ -26,7 +26,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		ToolkitRegistry reg = ToolkitRegistry.getEntry();
 
 		// Define the applet Menu Entry
-		helloMenuItem = reg.initMenuEntry(menuItemText, (short)0, (short)menuItemText.length,
+		helloMenuItem = reg.initMenuEntry(title, (short)0, (short)title.length,
 				PRO_CMD_SELECT_ITEM, false, (byte)0, (short)0);
 		reg.setEvent(EVENT_EVENT_DOWNLOAD_LOCATION_STATUS);
 	}
