@@ -91,6 +91,13 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		return;
 	}
 
+	private void showError(short code) {
+		byte[] msg = new byte[] {'E', '?', '?'};
+		msg[1] = (byte)('0' + code / 10);
+		msg[2] = (byte)('0' + code % 10);
+		showMsg(msg);
+	}
+
 	private void showIMSI() {
 		/* 3GPP TS 31.102 4.2.2: IMSI */
 		byte[] IMSI = new byte[9];
@@ -99,7 +106,12 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 
 		gsmFile.select((short) SIMView.FID_DF_GSM);
 		gsmFile.select((short) SIMView.FID_EF_IMSI);
-		gsmFile.readBinary((short)0, IMSI, (short)0, (short)9);
+
+		try {
+			gsmFile.readBinary((short)0, IMSI, (short)0, (short)9);
+		} catch (SIMViewException e) {
+			showError(e.getReason());
+		}
 
 		for (byte i = (byte)0; i < (byte)15; i++) {
 			byte msg_i = (byte)(14 + i);
@@ -110,6 +122,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			} else {
 				msg[msg_i] = (byte)('0' + (IMSI[i / (byte)2] >>> 4));
 			}
+			showMsg(msg); /* DEBUG */
 		}
 		showMsg(msg);
 	}
