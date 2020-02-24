@@ -285,23 +285,16 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 
 	private void showIMSI() {
 		/* 3GPP TS 31.102 4.2.2: IMSI */
-		byte[] IMSI = new byte[9];
 		byte[] msg = {'C', 'u', 'r', 'r', 'e', 'n', 't', ' ', 'I', 'M', 'S', 'I', ':', ' ',
 			      ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 
-		gsmFile.select((short) SIMView.FID_DF_GSM);
-		gsmFile.select((short) SIMView.FID_EF_IMSI);
-
 		try {
-			gsmFile.readBinary((short)0, IMSI, (short)0, (short)9);
+			byte IMSI[] = readIMSI();
+			mi2str(msg, (byte)14, (byte)16, IMSI, false);
+			showMsgAndWaitKey(msg);
 		} catch (SIMViewException e) {
 			showError(e.getReason());
-			return;
 		}
-
-		mi2str(msg, (byte)14, (byte)16, IMSI, false);
-
-		showMsgAndWaitKey(msg);
 	}
 
 	private void handleMenuResponseMain() {
@@ -342,5 +335,21 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		byte imsi[] = prompt(msg, (short)0, (short)15);
 		byte mi[] = str2mi(imsi, MI_IMSI);
 		showMsgAndWaitKey(hexdump(mi));
+	}
+
+	private byte[] readIMSI()
+	{
+		gsmFile.select((short) SIMView.FID_DF_GSM);
+		gsmFile.select((short) SIMView.FID_EF_IMSI);
+		byte[] IMSI = new byte[9];
+		gsmFile.readBinary((short)0, IMSI, (short)0, (short)9);
+		return IMSI;
+	}
+
+	private void writeIMSI(byte mi[])
+	{
+		gsmFile.select((short) SIMView.FID_DF_GSM);
+		gsmFile.select((short) SIMView.FID_EF_IMSI);
+		gsmFile.updateBinary((short)0, mi, (short)0, (short)mi.length);
 	}
 }
