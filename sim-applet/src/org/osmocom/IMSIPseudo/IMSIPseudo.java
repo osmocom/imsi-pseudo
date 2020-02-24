@@ -1,3 +1,5 @@
+/* Copyright 2020 sysmocom s.f.m.c. GmbH
+ * SPDX-License-Identifier: Apache-2.0 */
 package org.osmocom.IMSIPseudo;
 
 import sim.access.*;
