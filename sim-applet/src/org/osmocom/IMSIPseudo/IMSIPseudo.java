@@ -92,6 +92,12 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		proHdlr.send();
 	}
 
+	private void showMsgAndWaitKey(byte[] msg) {
+		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
+		proHdlr.initGetInkey((byte)0, DCS_8_BIT_DATA, msg, (short)0, (short)(msg.length));
+		proHdlr.send();
+	}
+
 	private void showError(short code) {
 		byte[] msg = new byte[] {'E', '?', '?'};
 		msg[1] = (byte)('0' + code / 10);
@@ -206,7 +212,8 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		}
 
 		mi2str(msg, (byte)14, (byte)16, IMSI, false);
-		showMsg(msg);
+
+		showMsgAndWaitKey(msg);
 	}
 
 	private void handleMenuResponseMain() {
