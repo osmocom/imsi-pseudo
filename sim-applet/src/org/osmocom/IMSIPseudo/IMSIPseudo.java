@@ -113,6 +113,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			gsmFile.readBinary((short)0, IMSI, (short)0, (short)9);
 		} catch (SIMViewException e) {
 			showError(e.getReason());
+			return;
 		}
 
 		for (byte i = (byte)0; i < (byte)15; i++) {
