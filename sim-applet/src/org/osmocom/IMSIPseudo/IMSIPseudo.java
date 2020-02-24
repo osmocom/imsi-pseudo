@@ -1,16 +1,8 @@
 package org.osmocom.IMSIPseudo;
 
-import javacard.framework.APDU;
-import javacard.framework.Applet;
-import javacard.framework.ISOException;
-
-import sim.toolkit.EnvelopeHandler;
-import sim.toolkit.ProactiveHandler;
-import sim.toolkit.ProactiveResponseHandler;
-import sim.toolkit.ToolkitConstants;
-import sim.toolkit.ToolkitException;
-import sim.toolkit.ToolkitInterface;
-import sim.toolkit.ToolkitRegistry;
+import sim.access.*;
+import sim.toolkit.*;
+import javacard.framework.*;
 
 public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConstants {
 	// DON'T DECLARE USELESS INSTANCE VARIABLES! They get saved to the EEPROM,
