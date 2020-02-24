@@ -15,19 +15,19 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	static byte[] LUCounter = new byte[] { '0', 'x', ' ', 'L', 'U' };
 
 	/* Main menu */
-	static byte[] title = new byte[] { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
+	private static final byte[] title = new byte[] { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
 					   'i', 'z', 'a', 't', 'i', 'o', 'n'};
-	static byte[] showLU = new byte[] {'S', 'h', 'o', 'w', ' ', 'L', 'U', ' ', 'c', 'o', 'u', 'n', 't', 'e', 'r'};
-	static byte[] showIMSI = new byte[] {'S', 'h', 'o', 'w', ' ', 'I', 'M', 'S', 'I'};
-	static byte[] changeIMSI = new byte[] {'C', 'h', 'a', 'n', 'g', 'e', ' ', 'I', 'M', 'S', 'I', ' '};
-	private Object[] itemListMain = {title, showLU, showIMSI, changeIMSI};
+	private static final byte[] showLU = new byte[] {'S', 'h', 'o', 'w', ' ', 'L', 'U', ' ', 'c', 'o', 'u', 'n', 't', 'e', 'r'};
+	private static final byte[] showIMSI = new byte[] {'S', 'h', 'o', 'w', ' ', 'I', 'M', 'S', 'I'};
+	private static final byte[] changeIMSI = new byte[] {'C', 'h', 'a', 'n', 'g', 'e', ' ', 'I', 'M', 'S', 'I', ' '};
+	private final Object[] itemListMain = {title, showLU, showIMSI, changeIMSI};
 
 	/* Change IMSI menu */
-	static byte[] setDigit1 = new byte[] {'S', 'e', 't', ' ', '1', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
+	private static final byte[] setDigit1 = new byte[] {'S', 'e', 't', ' ', '1', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
 						  'd', 'i', 'g', 'i', 't'};
-	static byte[] setDigit2 = new byte[] {'S', 'e', 't', ' ', '2', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
+	private static final byte[] setDigit2 = new byte[] {'S', 'e', 't', ' ', '2', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
 						  'd', 'i', 'g', 'i', 't'};
-	private Object[] itemListChangeIMSI = {changeIMSI, setDigit1, setDigit2};
+	private final Object[] itemListChangeIMSI = {changeIMSI, setDigit1, setDigit2};
 
 	private IMSIPseudo() {
 		gsmFile = SIMSystem.getTheSIMView();
