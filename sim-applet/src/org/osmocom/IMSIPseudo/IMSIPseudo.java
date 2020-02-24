@@ -23,11 +23,12 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	private final Object[] itemListMain = {title, showLU, showIMSI, changeIMSI};
 
 	/* Change IMSI menu */
+	private static final byte[] enterIMSI = new byte[] {'E', 'n', 't', 'e', 'r', ' ', 'I', 'M', 'S', 'I' };
 	private static final byte[] setDigit1 = new byte[] {'S', 'e', 't', ' ', '1', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
 						  'd', 'i', 'g', 'i', 't'};
 	private static final byte[] setDigit2 = new byte[] {'S', 'e', 't', ' ', '2', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
 						  'd', 'i', 'g', 'i', 't'};
-	private final Object[] itemListChangeIMSI = {changeIMSI, setDigit1, setDigit2};
+	private final Object[] itemListChangeIMSI = {changeIMSI, enterIMSI, setDigit1, setDigit2};
 
 	private static final byte MI_IMSI = 1;
 
@@ -314,13 +315,32 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			showIMSI();
 			break;
 		case 3: /* Change IMSI */
-			showMenu(itemListChangeIMSI, (byte)3);
+			showMenu(itemListChangeIMSI, (byte)4);
 			handleMenuResponseChangeIMSI();
 			break;
 		}
 	}
 
 	private void handleMenuResponseChangeIMSI() {
-		/* TODO */
+		ProactiveResponseHandler rspHdlr = ProactiveResponseHandler.getTheHandler();
+		switch (rspHdlr.getItemIdentifier()) {
+		case 1: /* enter IMSI */
+			promptIMSI();
+			break;
+		case 2: /* set last digit to 1 */
+			promptIMSI();
+			break;
+		case 3: /* set last digit to 2 */
+			promptIMSI();
+			break;
+		}
+	}
+
+	private void promptIMSI()
+	{
+		byte[] msg = {'N', 'e', 'w', ' ', 'I', 'M', 'S', 'I', '?'};
+		byte imsi[] = prompt(msg, (short)0, (short)15);
+		byte mi[] = str2mi(imsi, MI_IMSI);
+		showMsgAndWaitKey(hexdump(mi));
 	}
 }
