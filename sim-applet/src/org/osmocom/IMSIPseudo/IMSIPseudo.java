@@ -9,6 +9,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	// which has a limited number of write cycles.
 
 	private byte STKServicesMenuId;
+	private SIMView gsmFile;
 	static byte[] LUCounter = new byte[] { '0', 'x', ' ', 'L', 'U' };
 
 	/* Main menu */
@@ -27,6 +28,8 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	private Object[] itemListChangeIMSI = {changeIMSI, setDigit1, setDigit2};
 
 	private IMSIPseudo() {
+		gsmFile = SIMSystem.getTheSIMView();
+
 		/* Register menu and trigger on location updates */
 		ToolkitRegistry reg = ToolkitRegistry.getEntry();
 		STKServicesMenuId = reg.initMenuEntry(title, (short)0, (short)title.length, PRO_CMD_SELECT_ITEM, false,
@@ -88,6 +91,29 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		return;
 	}
 
+	private void showIMSI() {
+		/* 3GPP TS 31.102 4.2.2: IMSI */
+		byte[] IMSI = new byte[9];
+		byte[] msg = {'C', 'u', 'r', 'r', 'e', 'n', 't', ' ', 'I', 'M', 'S', 'I', ':', ' ',
+			      '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_'};
+
+		gsmFile.select((short) SIMView.FID_DF_GSM);
+		gsmFile.select((short) SIMView.FID_EF_IMSI);
+		gsmFile.readBinary((short)0, IMSI, (short)0, (short)9);
+
+		for (byte i = (byte)0; i < (byte)15; i++) {
+			byte msg_i = (byte)(14 + i);
+			if (i >= IMSI[0]) {
+				msg[msg_i] = ' ';
+			} else if (i % (byte)2 == (byte)0) {
+				msg[msg_i] = (byte)('0' + (IMSI[i / (byte)2] & 0x0f));
+			} else {
+				msg[msg_i] = (byte)('0' + (IMSI[i / (byte)2] >>> 4));
+			}
+		}
+		showMsg(msg);
+	}
+
 	private void handleMenuResponseMain() {
 		ProactiveResponseHandler rspHdlr = ProactiveResponseHandler.getTheHandler();
 
@@ -96,7 +122,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 				showMsg(LUCounter);
 				break;
 			case 2: /* Show IMSI */
-				/* TODO */
+				showIMSI();
 				break;
 			case 3: /* Change IMSI */
 				showMenu(itemListChangeIMSI, (byte)3);
