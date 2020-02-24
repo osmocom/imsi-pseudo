@@ -70,13 +70,6 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		}
 	}
 
-	private void showMsg(byte[] msg) {
-		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
-		proHdlr.initDisplayText((byte)0, DCS_8_BIT_DATA, msg, (short)0, (short)(msg.length));
-		proHdlr.send();
-		return;
-	}
-
 	private void showMenu(Object[] itemList, byte itemCount) {
 		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
 		proHdlr.init((byte) PRO_CMD_SELECT_ITEM,(byte)0,DEV_ID_ME);
@@ -94,6 +87,13 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			}
 		}
 		proHdlr.send();
+	}
+
+	private void showMsg(byte[] msg) {
+		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
+		proHdlr.initDisplayText((byte)0, DCS_8_BIT_DATA, msg, (short)0, (short)(msg.length));
+		proHdlr.send();
+		return;
 	}
 
 	private void handleMenuResponseMain() {
