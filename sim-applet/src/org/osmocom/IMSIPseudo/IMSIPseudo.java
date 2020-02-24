@@ -90,7 +90,6 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
 		proHdlr.initDisplayText((byte)0, DCS_8_BIT_DATA, msg, (short)0, (short)(msg.length));
 		proHdlr.send();
-		return;
 	}
 
 	private void showError(short code) {
