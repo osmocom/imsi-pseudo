@@ -34,3 +34,5 @@ remove:
 		-d "$$(echo $(PACKAGE_AID) | sed 's/0x//g' | sed 's/\://g')" \
 		--kic "$$KIC1" \
 		--kid "$$KID1"
+
+delete: remove
