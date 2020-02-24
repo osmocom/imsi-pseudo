@@ -9,7 +9,7 @@ PACKAGE_VERSION = 1.0
 SOURCES = src/org/osmocom/IMSIPseudo/IMSIPseudo.java
 CAP_FILE = build/javacard/org/osmocom/IMSIPseudo/javacard/IMSIPseudo.cap
 
-include $(SIMTOOLS_DIR)/javacard/makefiles/applet-project.mk
+include ./applet-project.mk
 
 flash: classes
 	$(eval MODULE_AID   := $(shell echo $(APPLET_AID) | sed 's/0x//g' | sed 's/\://g'))
