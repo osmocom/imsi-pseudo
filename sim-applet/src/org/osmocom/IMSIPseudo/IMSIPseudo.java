@@ -55,20 +55,19 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			byte selectedItemId = envHdlr.getItemIdentifier();
 
 			if (selectedItemId == helloMenuItem) {
-				showHello();
+				showMsg(LUCounter);
 			}
 		}
 
 		if (event == EVENT_EVENT_DOWNLOAD_LOCATION_STATUS) {
 			LUCounter[0]++;
-			showHello();
+			showMsg(LUCounter);
 		}
 	}
 
-	private void showHello() {
+	private void showMsg(byte[] msg) {
 		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
-		proHdlr.initDisplayText((byte)0, DCS_8_BIT_DATA, LUCounter, (short)0,
-				(short)(LUCounter.length));
+		proHdlr.initDisplayText((byte)0, DCS_8_BIT_DATA, msg, (short)0, (short)(msg.length));
 		proHdlr.send();
 		return;
 	}
