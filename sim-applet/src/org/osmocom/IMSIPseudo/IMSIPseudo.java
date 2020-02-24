@@ -202,7 +202,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		byte mi[];
 		try {
 			mi = MobileIdentity.str2mi(imsi, MobileIdentity.MI_IMSI, (byte)9);
-			showMsgAndWaitKey(hexdump(mi));
+			writeIMSI(mi);
 		} catch (Exception e) {
 			byte err[] = {'E', 'R', 'R' };
 			showMsgAndWaitKey(err);
