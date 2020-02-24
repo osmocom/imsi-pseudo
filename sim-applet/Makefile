@@ -19,6 +19,7 @@ flash: classes
 		-l $(CAP_FILE) \
 		-i $(CAP_FILE) \
 		--enable-sim-toolkit \
+		--access-domain=00 \
 		--module-aid $(MODULE_AID) \
 		--instance-aid $(INSTANCE_AID) \
 		--nonvolatile-memory-required 0100 \
