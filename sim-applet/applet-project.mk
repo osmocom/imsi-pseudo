@@ -8,17 +8,18 @@ ifdef COMSPEC
 else
 	CLASSPATH           = $(JAVACARD_SDK_DIR)/lib/api21.jar:$(JAVACARD_SDK_DIR)/lib/sim.jar
 endif
-JFLAGS              = -target 1.1 -source 1.3 -g -d $(BUILD_CLASSES_DIR) -classpath "$(CLASSPATH)"
+JFLAGS              = -target 1.1 -source 1.3 -g -d $(BUILD_CLASSES_DIR) -classpath "$(BUILD_CLASSES_DIR):$(CLASSPATH)"
 JAVA                ?= java
 JC                  ?= javac
 
 .SUFFIXES: .java .class
 .java.class:
-	mkdir -p $(BUILD_CLASSES_DIR)
-	mkdir -p $(BUILD_JAVACARD_DIR)
-
+	@mkdir -p $(BUILD_CLASSES_DIR)
+	@mkdir -p $(BUILD_JAVACARD_DIR)
 	$(JC) $(JFLAGS) $*.java
 
+.PHONY: jar
+jar: classes
 	$(JAVA) -jar $(JAVACARD_SDK_DIR)/bin/converter.jar  \
 		-d $(BUILD_JAVACARD_DIR)                    \
 		-classdir $(BUILD_CLASSES_DIR)              \
@@ -26,7 +27,7 @@ JC                  ?= javac
 		-applet $(APPLET_AID) $(APPLET_NAME)        \
 		$(PACKAGE_NAME) $(PACKAGE_AID) $(PACKAGE_VERSION)
 
-default: classes
+default: jar
 
 classes: $(SOURCES:.java=.class)
 
