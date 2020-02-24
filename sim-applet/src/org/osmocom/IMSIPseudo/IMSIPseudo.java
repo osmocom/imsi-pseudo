@@ -103,7 +103,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		/* 3GPP TS 31.102 4.2.2: IMSI */
 		byte[] IMSI = new byte[9];
 		byte[] msg = {'C', 'u', 'r', 'r', 'e', 'n', 't', ' ', 'I', 'M', 'S', 'I', ':', ' ',
-			      '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_'};
+			      '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_'};
 
 		gsmFile.select((short) SIMView.FID_DF_GSM);
 		gsmFile.select((short) SIMView.FID_EF_IMSI);
@@ -114,10 +114,11 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			showError(e.getReason());
 			return;
 		}
+		byte len = (byte) (IMSI[0] * 2);
 
-		for (byte i = (byte)0; i < (byte)15; i++) {
+		for (byte i = (byte)0; i < (byte)18; i++) {
 			byte msg_i = (byte)(14 + i);
-			if (i >= IMSI[0]) {
+			if (i >= len) {
 				msg[msg_i] = ' ';
 			} else if (i % (byte)2 == (byte)0) {
 				msg[msg_i] = (byte)('0' + (IMSI[i / (byte)2] & 0x0f));
