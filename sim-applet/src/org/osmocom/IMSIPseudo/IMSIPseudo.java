@@ -29,6 +29,8 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 						  'd', 'i', 'g', 'i', 't'};
 	private final Object[] itemListChangeIMSI = {changeIMSI, setDigit1, setDigit2};
 
+	private static final byte MI_IMSI = 1;
+
 	private IMSIPseudo() {
 		gsmFile = SIMSystem.getTheSIMView();
 
@@ -139,6 +141,18 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			return (byte)('A' + (bcd - 0xa));
 	}
 
+	private byte char2bcd(byte c)
+	{
+		if (c >= '0' && c <= '9')
+			return (byte)(c - '0');
+		else if (c >= 'A' && c <= 'F')
+			return (byte)(0xa + (c - 'A'));
+		else if (c >= 'a' && c <= 'f')
+			return (byte)(0xa + (c - 'a'));
+		else
+			return 0;
+	}
+
 	/* Convert BCD to string.
 	 * The given nibble offsets are interpreted in BCD order, i.e. nibble 0 is bcd[0] & 0xf, nibble 1 is bcd[0] >> 4, nibble
 	 * 3 is bcd[1] & 0xf, etc..
@@ -174,8 +188,8 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		return rc;
 	}
 
-	private boolean mi2str(byte dst[], byte dst_ofs, byte dst_len,
-			       byte mi[], boolean allow_hex)
+	private byte mi2str(byte dst[], byte dst_ofs, byte dst_len,
+			    byte mi[], boolean allow_hex)
 	{
 		/* The IMSI byte array by example:
 		 * 08 99 10 07 00 00 10 74 90
@@ -214,7 +228,39 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		boolean odd_nr_of_digits = ((mi_type & 0x08) != 0);
 		byte start_nibble = 2 + 1; // 2 to skip the bytelen, 1 to skip the mi_type
 		byte end_nibble = (byte)(2 + bytelen * 2 - (odd_nr_of_digits ? 0 : 1));
-		return bcd2str(dst, dst_ofs, dst_len, mi, start_nibble, end_nibble, allow_hex);
+		bcd2str(dst, dst_ofs, dst_len, mi, start_nibble, end_nibble, allow_hex);
+		return (byte)(end_nibble - start_nibble);
+	}
+
+	private byte[] str2mi(byte str[], byte mi_type)
+	{
+		/* 1 byte of MI length.
+		 * 1 nibble of mi_type.
+		 * str.length nibbles of MI BCD.
+		 * The first MI digit is in the high-nibble of the mi_type, so an odd amount of digits becomes
+		 * (1 + str.length)/2 bytes; an even amount of digits has same amount of bytes with the last
+		 * nibble unused (0xf0). */
+		byte len = (byte)(1 + (byte)(1 + str.length)/2);
+		byte mi[] = new byte[1 + len];
+		mi[0] = len;
+
+		boolean odd_digits = ((str.length & 1) != 0);
+		mi_type = (byte)(mi_type & 0x07);
+		if (odd_digits)
+			mi_type |= 0x08;
+		mi[1] = (byte)((char2bcd(str[0]) << 4) + mi_type);
+		byte str_i = 1;
+		for (byte bcd_i = 1; bcd_i < len; bcd_i++) {
+			byte data = char2bcd(str[str_i]);
+			str_i++;
+			if (str_i < str.length) {
+				data |= char2bcd(str[str_i]) << 4;
+				str_i++;
+			} else
+				data |= 0xf0;
+			mi[1 + bcd_i] = data;
+		}
+		return mi;
 	}
 
 	private void showIMSI() {
