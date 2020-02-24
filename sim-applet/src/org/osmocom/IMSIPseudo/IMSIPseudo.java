@@ -220,16 +220,16 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		ProactiveResponseHandler rspHdlr = ProactiveResponseHandler.getTheHandler();
 
 		switch (rspHdlr.getItemIdentifier()) {
-			case 1: /* Show LU counter */
-				showMsg(LUCounter);
-				break;
-			case 2: /* Show IMSI */
-				showIMSI();
-				break;
-			case 3: /* Change IMSI */
-				showMenu(itemListChangeIMSI, (byte)3);
-				handleMenuResponseChangeIMSI();
-				break;
+		case 1: /* Show LU counter */
+			showMsg(LUCounter);
+			break;
+		case 2: /* Show IMSI */
+			showIMSI();
+			break;
+		case 3: /* Change IMSI */
+			showMenu(itemListChangeIMSI, (byte)3);
+			handleMenuResponseChangeIMSI();
+			break;
 		}
 	}
 
