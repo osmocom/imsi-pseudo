@@ -41,6 +41,13 @@ remove:
 		--kic "$$KIC1" \
 		--kid "$$KID1"
 
+list:
+	. $$PWD/.sim-keys && $(SIMTOOLS_DIR)/bin/shadysim \
+		--pcsc \
+		--list-applets \
+		--kic "$$KIC1" \
+		--kid "$$KID1"
+
 delete: remove
 
 .PHONY: test
