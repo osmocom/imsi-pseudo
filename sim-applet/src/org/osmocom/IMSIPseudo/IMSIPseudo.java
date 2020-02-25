@@ -13,21 +13,21 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 
 	private byte STKServicesMenuId;
 	private SIMView gsmFile;
-	static byte[] LUCounter = new byte[] { '0', 'x', ' ', 'L', 'U' };
+	static byte[] LUCounter = { '0', 'x', ' ', 'L', 'U' };
 
 	/* Main menu */
-	private static final byte[] title = new byte[] { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
+	private static final byte[] title = { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
 					   'i', 'z', 'a', 't', 'i', 'o', 'n'};
-	private static final byte[] showLU = new byte[] {'S', 'h', 'o', 'w', ' ', 'L', 'U', ' ', 'c', 'o', 'u', 'n', 't', 'e', 'r'};
-	private static final byte[] showIMSI = new byte[] {'S', 'h', 'o', 'w', ' ', 'I', 'M', 'S', 'I'};
-	private static final byte[] changeIMSI = new byte[] {'C', 'h', 'a', 'n', 'g', 'e', ' ', 'I', 'M', 'S', 'I', ' '};
+	private static final byte[] showLU = {'S', 'h', 'o', 'w', ' ', 'L', 'U', ' ', 'c', 'o', 'u', 'n', 't', 'e', 'r'};
+	private static final byte[] showIMSI = {'S', 'h', 'o', 'w', ' ', 'I', 'M', 'S', 'I'};
+	private static final byte[] changeIMSI = {'C', 'h', 'a', 'n', 'g', 'e', ' ', 'I', 'M', 'S', 'I', ' '};
 	private final Object[] itemListMain = {title, showLU, showIMSI, changeIMSI};
 
 	/* Change IMSI menu */
-	private static final byte[] enterIMSI = new byte[] {'E', 'n', 't', 'e', 'r', ' ', 'I', 'M', 'S', 'I' };
-	private static final byte[] setDigit1 = new byte[] {'S', 'e', 't', ' ', '1', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
+	private static final byte[] enterIMSI = {'E', 'n', 't', 'e', 'r', ' ', 'I', 'M', 'S', 'I' };
+	private static final byte[] setDigit1 = {'S', 'e', 't', ' ', '1', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
 						  'd', 'i', 'g', 'i', 't'};
-	private static final byte[] setDigit2 = new byte[] {'S', 'e', 't', ' ', '2', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
+	private static final byte[] setDigit2 = {'S', 'e', 't', ' ', '2', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
 						  'd', 'i', 'g', 'i', 't'};
 	private final Object[] itemListChangeIMSI = {changeIMSI, enterIMSI, setDigit1, setDigit2};
 
@@ -166,7 +166,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	}
 
 	private void showError(short code) {
-		byte[] msg = new byte[] {'E', '?', '?'};
+		byte[] msg = {'E', '?', '?'};
 		msg[1] = (byte)('0' + code / 10);
 		msg[2] = (byte)('0' + code % 10);
 		showMsg(msg);
