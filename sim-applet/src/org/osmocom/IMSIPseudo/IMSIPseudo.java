@@ -19,17 +19,12 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	private static final byte[] title = { 'I', 'M', 'S', 'I', ' ', 'P', 's', 'e', 'u', 'd', 'o', 'n', 'y', 'm',
 					   'i', 'z', 'a', 't', 'i', 'o', 'n'};
 	private static final byte[] showLU = {'S', 'h', 'o', 'w', ' ', 'L', 'U', ' ', 'c', 'o', 'u', 'n', 't', 'e', 'r'};
-	private static final byte[] showIMSI = {'S', 'h', 'o', 'w', ' ', 'I', 'M', 'S', 'I'};
-	private static final byte[] changeIMSI = {'C', 'h', 'a', 'n', 'g', 'e', ' ', 'I', 'M', 'S', 'I', ' '};
-	private final Object[] itemListMain = {title, showLU, showIMSI, changeIMSI};
-
-	/* Change IMSI menu */
-	private static final byte[] enterIMSI = {'E', 'n', 't', 'e', 'r', ' ', 'I', 'M', 'S', 'I' };
-	private static final byte[] setDigit1 = {'S', 'e', 't', ' ', '1', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
-						  'd', 'i', 'g', 'i', 't'};
-	private static final byte[] setDigit2 = {'S', 'e', 't', ' ', '2', ' ', 'a', 's', ' ', 'l', 'a', 's', 't', ' ',
-						  'd', 'i', 'g', 'i', 't'};
-	private final Object[] itemListChangeIMSI = {changeIMSI, enterIMSI, setDigit1, setDigit2};
+	private static final byte[] changeIMSI = {'C', 'h', 'a', 'n', 'g', 'e', ' ', 'I', 'M', 'S', 'I'};
+	private static final byte[] invalidIMSI = {'I', 'n', 'v', 'a', 'l', 'i', 'd', ' ', 'I', 'M', 'S', 'I'};
+	private static final byte[] noChange = {'N', 'o', ' ', 'c', 'h', 'a', 'n', 'g', 'e'};
+	private static final byte[] changed = {'I', 'M', 'S', 'I', ' ', 'c', 'h', 'a', 'n', 'g', 'e', 'd', '!'};
+	private static final byte error[] = {'E', 'R', 'R', 'O', 'R' };
+	private final Object[] itemListMain = {title, showLU, changeIMSI};
 
 	private IMSIPseudo() {
 		gsmFile = SIMSystem.getTheSIMView();
@@ -172,21 +167,6 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		showMsg(msg);
 	}
 
-
-	private void showIMSI() {
-		/* 3GPP TS 31.102 4.2.2: IMSI */
-		byte[] msg = {'C', 'u', 'r', 'r', 'e', 'n', 't', ' ', 'I', 'M', 'S', 'I', ':', ' ',
-			      ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
-
-		try {
-			byte IMSI[] = readIMSI();
-			MobileIdentity.mi2str(msg, (byte)14, (byte)16, IMSI, false);
-			showMsgAndWaitKey(msg);
-		} catch (SIMViewException e) {
-			showError(e.getReason());
-		}
-	}
-
 	private void handleMenuResponseMain() {
 		ProactiveResponseHandler rspHdlr = ProactiveResponseHandler.getTheHandler();
 
@@ -194,43 +174,44 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		case 1: /* Show LU counter */
 			showMsg(LUCounter);
 			break;
-		case 2: /* Show IMSI */
-			showIMSI();
-			break;
-		case 3: /* Change IMSI */
-			showMenu(itemListChangeIMSI);
-			handleMenuResponseChangeIMSI();
+		case 2: /* Change IMSI */
+			byte prevIMSI_mi[] = readIMSI();
+			byte prevIMSI_str[] = MobileIdentity.mi2str(prevIMSI_mi);
+			promptIMSI(prevIMSI_str);
 			break;
 		}
 	}
 
-	private void handleMenuResponseChangeIMSI() {
-		ProactiveResponseHandler rspHdlr = ProactiveResponseHandler.getTheHandler();
-		switch (rspHdlr.getItemIdentifier()) {
-		case 1: /* enter IMSI */
-			promptIMSI();
-			break;
-		case 2: /* set last digit to 1 */
-			promptIMSI();
-			break;
-		case 3: /* set last digit to 2 */
-			promptIMSI();
-			break;
-		}
-	}
-
-	private void promptIMSI()
+	private void promptIMSI(byte prevIMSI_str[])
 	{
-		byte[] msg = {'N', 'e', 'w', ' ', 'I', 'M', 'S', 'I', '?'};
-		byte imsi[] = prompt(msg, (short)0, (short)15);
-		/* The IMSI file should be 9 bytes long, even if the IMSI is shorter */
+		byte newIMSI_str[] = prevIMSI_str;
+
+		try {
+			newIMSI_str = prompt(changeIMSI, newIMSI_str, (short)0, (short)15);
+		} catch (Exception e) {
+			showError((short)40);
+			return;
+		}
+
+		if (newIMSI_str.length < 6 || newIMSI_str.length > 15
+		    || !Bytes.isDigit(newIMSI_str)) {
+			showMsg(invalidIMSI);
+			return;
+		}
+
+		if (Bytes.equals(newIMSI_str, prevIMSI_str)) {
+			showMsg(noChange);
+			return;
+		}
+
 		byte mi[];
 		try {
-			mi = MobileIdentity.str2mi(imsi, MobileIdentity.MI_IMSI, (byte)9);
+			/* The IMSI file should be 9 bytes long, even if the IMSI is shorter */
+			mi = MobileIdentity.str2mi(newIMSI_str, MobileIdentity.MI_IMSI, (byte)9);
 			writeIMSI(mi);
+			showMsg(changed);
 		} catch (Exception e) {
-			byte err[] = {'E', 'R', 'R' };
-			showMsgAndWaitKey(err);
+			showError((short)42);
 		}
 	}
 

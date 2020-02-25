@@ -52,8 +52,7 @@ public class MobileIdentity {
 		return rc;
 	}
 
-	public static byte mi2str(byte dst[], byte dst_ofs, byte dst_len,
-				  byte mi[], boolean allow_hex)
+	public static byte[] mi2str(byte mi[])
 	{
 		/* The IMSI byte array by example:
 		 * 08 99 10 07 00 00 10 74 90
@@ -92,8 +91,9 @@ public class MobileIdentity {
 		boolean odd_nr_of_digits = ((mi_type & 0x08) != 0);
 		byte start_nibble = 2 + 1; // 2 to skip the bytelen, 1 to skip the mi_type
 		byte end_nibble = (byte)(2 + bytelen * 2 - (odd_nr_of_digits ? 0 : 1));
-		bcd2str(dst, dst_ofs, dst_len, mi, start_nibble, end_nibble, allow_hex);
-		return (byte)(end_nibble - start_nibble);
+		byte str[] = new byte[end_nibble - start_nibble];
+		bcd2str(str, (byte)0, (byte)str.length, mi, start_nibble, end_nibble, true);
+		return str;
 	}
 
 	public static byte char2bcd(byte c)

@@ -28,17 +28,36 @@ public class Test {
 		return new String(hexdump(data));
 	}
 
+	private static final String[] imsis = {
+		"123456",
+		"1234567",
+		"12345678",
+		"123456789",
+		"1234567890",
+		"12345678901",
+		"123456789012",
+		"1234567890123",
+		"12345678901234",
+		"123456789012345",
+		"1234567890123456",
+	};
+
+	private static void test_str2mi2str()
+	{
+		for (int i = 0; i < imsis.length; i++) {
+			byte str[] = imsis[i].getBytes();
+			byte mi[] = MobileIdentity.str2mi(str, MobileIdentity.MI_IMSI, (byte)9);
+			byte str_from_mi[] = MobileIdentity.mi2str(mi);
+			System.out.print("IMSI " + new String(str) + " --> MI " + hexdumpStr(mi) + " --> IMSI "
+					   + new String(str_from_mi));
+			if (Bytes.equals(str, str_from_mi))
+				System.out.println(" (ok)");
+			else
+				System.out.println(" ERROR!");
+		}
+	}
+
 	public static void main(String args[]){
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("123456".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("1234567".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("12345678".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("123456789".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("1234567890".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("12345678901".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("123456789012".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("1234567890123".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("12345678901234".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("123456789012345".getBytes(), (byte)1, (byte)9)));
-		System.out.println(hexdumpStr(MobileIdentity.str2mi("1234567890123456".getBytes(), (byte)1, (byte)9)));
+		test_str2mi2str();
 	}
 }
