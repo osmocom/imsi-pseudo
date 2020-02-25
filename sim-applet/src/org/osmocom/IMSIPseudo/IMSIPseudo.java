@@ -58,7 +58,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			byte selectedItemId = envHdlr.getItemIdentifier();
 
 			if (selectedItemId == STKServicesMenuId) {
-				showMenu(itemListMain, (byte)4);
+				showMenu(itemListMain);
 				handleMenuResponseMain();
 			}
 		}
@@ -69,11 +69,11 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		}
 	}
 
-	private void showMenu(Object[] itemList, byte itemCount) {
+	private void showMenu(Object[] itemList) {
 		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
 		proHdlr.init((byte) PRO_CMD_SELECT_ITEM,(byte)0,DEV_ID_ME);
 
-		for (byte i=(byte)0;i<itemCount;i++) {
+		for (byte i=(byte)0; i < itemList.length; i++) {
 			if (i == 0) {
 				/* Title */
 				proHdlr.appendTLV((byte)(TAG_ALPHA_IDENTIFIER | TAG_SET_CR), (byte[])itemList[i],
@@ -173,7 +173,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			showIMSI();
 			break;
 		case 3: /* Change IMSI */
-			showMenu(itemListChangeIMSI, (byte)4);
+			showMenu(itemListChangeIMSI);
 			handleMenuResponseChangeIMSI();
 			break;
 		}
