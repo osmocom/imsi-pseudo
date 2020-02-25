@@ -243,8 +243,10 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		return IMSI;
 	}
 
-	private void writeIMSI(byte mi[])
+	private void writeIMSI(byte mi[]) throws Exception
 	{
+		if (mi.length != 9)
+			throw new Exception();
 		gsmFile.select((short) SIMView.FID_DF_GSM);
 		gsmFile.select((short) SIMView.FID_EF_IMSI);
 		gsmFile.updateBinary((short)0, mi, (short)0, (short)mi.length);
