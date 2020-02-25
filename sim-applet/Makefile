@@ -54,6 +54,11 @@ list:
 .PHONY: delete
 delete: remove
 
+.PHONY: reflash
+reflash:
+	$(MAKE) remove
+	$(MAKE) flash
+
 .PHONY: test
 test:
 	mkdir -p ./test/classes
