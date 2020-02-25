@@ -16,6 +16,7 @@ CAP_FILE = build/javacard/org/osmocom/IMSIPseudo/javacard/IMSIPseudo.cap
 
 include ./applet-project.mk
 
+.PHONY: flash
 flash: classes
 	$(eval MODULE_AID   := $(shell echo $(APPLET_AID) | sed 's/0x//g' | sed 's/\://g'))
 	$(eval INSTANCE_AID := $(shell echo $(APPLET_AID) | sed 's/0x//g' | sed 's/\://g'))
@@ -34,6 +35,7 @@ flash: classes
 		--kic "$$KIC1" \
 		--kid "$$KID1"
 
+.PHONY: remove
 remove:
 	. $$PWD/.sim-keys && $(SIMTOOLS_DIR)/bin/shadysim \
 		--pcsc \
@@ -41,6 +43,7 @@ remove:
 		--kic "$$KIC1" \
 		--kid "$$KID1"
 
+.PHONY: list
 list:
 	. $$PWD/.sim-keys && $(SIMTOOLS_DIR)/bin/shadysim \
 		--pcsc \
@@ -48,6 +51,7 @@ list:
 		--kic "$$KIC1" \
 		--kid "$$KID1"
 
+.PHONY: delete
 delete: remove
 
 .PHONY: test
