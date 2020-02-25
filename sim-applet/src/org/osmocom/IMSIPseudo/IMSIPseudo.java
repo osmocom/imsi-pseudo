@@ -129,24 +129,6 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		showMsg(msg);
 	}
 
-	private byte nibble2hex(byte nibble)
-	{
-		nibble = (byte)(nibble & 0xf);
-		if (nibble < 0xa)
-			return (byte)('0' + nibble);
-		else
-			return (byte)('a' + nibble - 0xa);
-	}
-
-	private byte[] hexdump(byte data[])
-	{
-		byte res[] = new byte[(byte)(data.length*2)];
-		for (byte i = 0; i < data.length; i++) {
-			res[(byte)(i*2)] = nibble2hex((byte)(data[i] >> 4));
-			res[(byte)(i*2 + 1)] = nibble2hex(data[i]);
-		}
-		return res;
-	}
 
 	private void showIMSI() {
 		/* 3GPP TS 31.102 4.2.2: IMSI */

@@ -6,7 +6,11 @@ PACKAGE_AID     = 0xd0:0x70:0x02:0xCA:0x44:0x90:0x01
 PACKAGE_NAME    = org.osmocom.IMSIPseudo
 PACKAGE_VERSION = 1.0
 
-SOURCES = src/org/osmocom/IMSIPseudo/MobileIdentity.java src/org/osmocom/IMSIPseudo/IMSIPseudo.java
+SOURCES = \
+	  src/org/osmocom/IMSIPseudo/Bytes.java \
+	  src/org/osmocom/IMSIPseudo/MobileIdentity.java \
+	  src/org/osmocom/IMSIPseudo/IMSIPseudo.java \
+	  $(NULL)
 
 CAP_FILE = build/javacard/org/osmocom/IMSIPseudo/javacard/IMSIPseudo.cap
 
@@ -42,6 +46,7 @@ delete: remove
 .PHONY: test
 test:
 	mkdir -p ./test/classes
+	javac -target 1.1 -source 1.3 -classpath test/classes -g -d ./test/classes src/org/osmocom/IMSIPseudo/Bytes.java
 	javac -target 1.1 -source 1.3 -classpath test/classes -g -d ./test/classes src/org/osmocom/IMSIPseudo/MobileIdentity.java
 	javac -target 1.1 -source 1.3 -classpath test/classes -g -d ./test/classes src/org/osmocom/IMSIPseudo/Test.java
 	java -classpath test/classes org.osmocom.IMSIPseudo.Test
