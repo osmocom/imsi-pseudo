@@ -102,6 +102,38 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		return resp;
 	}
 
+	/*
+	This was used to find out that the first byte of a text field seems to be 4.
+	private byte[] getResponseDBG()
+	{
+		ProactiveResponseHandler rspHdlr;
+		byte resp[];
+		byte strlen = -1;
+		rspHdlr = ProactiveResponseHandler.getTheHandler();
+
+		for (byte occurence = 1; occurence <= 3; occurence++) {
+			short len;
+			try {
+				if (rspHdlr.findTLV(TAG_TEXT_STRING, (byte)occurence) != TLV_NOT_FOUND) {
+					if ((len = rspHdlr.getValueLength()) > 1) {
+						len = 3;
+						resp = new byte[len];
+						rspHdlr.copyValue((short)0, resp, (short)0, (short)(len));
+						showMsg(resp);
+						showMsgAndWaitKey(Bytes.hexdump(resp));
+						return resp;
+					}
+				}
+			} catch (Exception e) {
+				showError((short)(30 + occurence));
+				return null;
+			}
+		}
+		showError((short)(39));
+		return null;
+	}
+	*/
+
 	private byte[] showMsgAndWaitKey(byte[] msg) {
 		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
 		proHdlr.initGetInkey((byte)0, DCS_8_BIT_DATA, msg, (short)0, (short)(msg.length));
@@ -110,13 +142,24 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		return getResponse();
 	}
 
-	private byte[] prompt(byte[] msg, short minLen, short maxLen) {
+	private byte[] prompt(byte[] msg, byte[] prefillVal, short minLen, short maxLen) {
 		/* if maxLen < 1, the applet crashes */
 		if (maxLen < 1)
 			maxLen = 1;
 
 		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
 		proHdlr.initGetInput((byte)0, DCS_8_BIT_DATA, msg, (short)0, (short)(msg.length), minLen, maxLen);
+		if (prefillVal != null && prefillVal.length > 0) {
+			/* appendTLV() expects the first byte to be some header before the actual text.
+			 * At first I thought it was the value's length, but turned out to only work for lengths under 8...
+			 * In the end I reversed the value 4 from the first byte read by rspHdlr.copyValue() for
+			 * TAG_TEXT_STRING fields. As long as we write 4 into the first byte, things just work out,
+			 * apparently.
+			 * Fucking well could have said so in the API docs, too; oh the brain damage, oh the hours wasted.
+			 * This is the appendTLV() variant that writes one byte ahead of writing an array: */
+			proHdlr.appendTLV((byte)(TAG_DEFAULT_TEXT), (byte)4, prefillVal, (short)0,
+					  (short)(prefillVal.length));
+		}
 		proHdlr.send();
 
 		return getResponse();
