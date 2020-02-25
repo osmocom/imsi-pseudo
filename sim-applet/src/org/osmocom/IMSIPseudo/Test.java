@@ -57,7 +57,19 @@ public class Test {
 		}
 	}
 
+	private static void test_toStr()
+	{
+		byte nr = -128;
+		while (true) {
+			System.out.println("" + nr + " = '" + new String(Bytes.toStr(nr)) + "'");
+			if (nr == 127)
+				break;
+			nr++;
+		}
+	}
+
 	public static void main(String args[]){
 		test_str2mi2str();
+		test_toStr();
 	}
 }
