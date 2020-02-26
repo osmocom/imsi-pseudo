@@ -7,123 +7,109 @@ Homepage: https://osmocom.org/projects/imsi-pseudo/wiki
 
 ## How it works
 
-The first pseudo IMSI gets allocated, as the SIM card is provisioned. After
-that pseudo IMSI is used for the first time in location update, the HLR decides
-the next pseudo IMSI and sends it as SMS to the SIM. The SIM applet overwrites
-its current IMSI with the new one, and uses it in the next location update.
-Afterwards, the HLR will generate the next IMSI and so on.
-
-**FIXME:** details below need updating, see [OS#4400](https://osmocom.org/issues/4400).
+The first pseudo IMSI gets allocated in the HLR, as the SIM card is
+provisioned. After that pseudo IMSI is used for the first time in location
+update, the HLR waits for some time, then decides the next pseudo IMSI and
+sends it together with a delay value as SMS to the SIM. The SIM applet receives
+the SMS and waits the specified delay. Then it overwrites its current IMSI with
+the new one, marks the TMSI as invalid, and initiates the next location update.
+Afterwards, the process repeats.
 
 ```
 HLR <-> SIM  LOCATION UPDATE, imsi_pseudo=200
-HLR  -> SIM  NEW PSEUDO IMSI REQ, session_id=1, imsi_pseudo=123
-HLR <-  SIM  NEW PSEUDO IMSI RESP ACK, session_id=1, imsi_pseudo=123
 (time passes)
+HLR  -> SIM  NEW PSEUDO IMSI, imsi_pseudo=123, delay=60
+(time passes until the SMS arrives)
+(SIM applet waits 60 seconds)
 HLR <-> SIM  LOCATION UPDATE, imsi_pseudo=123
 ...
 ```
 
 ## In Detail
 
-1. The HLR has a table of allocated pseudo IMSIs. When provisioning a new SIM,
-it randomly decides a new pseudo IMSI. There must be no existing entry in the
-table with the same pseudo IMSI in the imsi_pseudo column, but the pseudo IMSI
-may be the real IMSI of an existing entry.
+1. Provisioning the SIM
 
-|   id |   imsi |   imsi_pseudo |   session_id |
-|------|--------|---------------|--------------|
-|    1 |   100  |   200         | 0            |
+The HLR allocates a new pseudo IMSI as random choice from the pool of available
+IMSIs. The pseudo IMSI must not be used by any other subscriber as pseudo IMSI,
+but may be the real IMSI of another subscriber. The subscriber-specific counter
+imsi_pseudo_i is 0 for the first allocated IMSI for that subscriber.
 
-(Other interesting fields to store in the table may be a boolean for
-"provisioned", the allocation date and usage count. The usage count would
-increase whenever the SIM does a successful Location Update with that pseudo
-IMSI.)
+|   id |   imsi |   imsi_pseudo | imsi_pseudo_i |
+|------|--------|---------------|---------------|
+|    1 |   100  |   200         | 0             |
 
-2. The SIM does a successful Location Update with its current pseudo IMSI.
+The pseudo IMSI is saved to the SIM as IMSI, instead of the real IMSI. The SIM
+is also provisioned with the IMSI pseudonymization applet.
 
-(Clean up: if the ACK from the SIM card in step 4 did not arrive in a previous
- provisioning of a new pseudo IMSI, and the SIM has connected with the newer
- pseudo IMSI entry, the old pseudo IMSI entry gets deleted now.)
+2. Successful Location Update with pseudo IMSI
 
-Then the HLR creates a new entry with a new pseudo IMSI (generated as described
-in 1.), and with the session_id increased by one.
+a) If this was the first Location Update after provisioning the SIM, the
+subscriber has only one pseudo IMSI allocated. The HLR waits for some time.
+Then it allocates the next pseudo IMSI from the pool of available IMSIs (as in
+1., but with imsi_pseudo_i increased by one). The HLR sends the new
+pseudo IMSI, the imsi_pseudo_i and a random delay value in one SMS to the SIM.
 
-|   id |   imsi |   imsi_pseudo |   session_id |
-|------|--------|---------------|--------------|
-|    1 |   100  |   200         | 0            |
-|    2 |   100  |   123         | 1            |
+The random delay is how long the SIM applet should wait before changing the
+IMSI. This delay prevents easy correlation of the arrival of the SMS with the
+Location Update that will follow in 3. by the SIM. Due to other latencies in
+the network, this is a minimum delay. At this point, the subscriber has two
+allocated pseudo IMSIs:
 
-The new information is encoded in an SMS and sent to the SIM.
+|   id |   imsi |   imsi_pseudo | imsi_pseudo_i |
+|------|--------|---------------|---------------|
+|    1 |   100  |   200         | 0             |
+|    2 |   100  |   123         | 1             |
 
-```
-HLR  -> SIM  NEW PSEUDO IMSI REQ, session_id=1, imsi_pseudo=123
-```
+b) If this was not the first Location Update after provisioning a new SIM, the
+subscriber already has two pseudo IMSIs allocated when doing the Location
+Update. The HLR compares imsi_pseudo_i to find out if the Location Update was
+done with the newer or older pseudo IMSI.
 
-3. The SIM applet verifies, that the session_id is higher than the last
-session_id it has seen (initially: 0). If that is not the case, it discards the
-message.
+If the older pseudo IMSI was used, then the SIM applet was not able to set the
+new IMSI. This may be caused by an SMS arriving late, possibly even months
+after it was sent in case the UE was without power for a long period of time.
+Therefore the HLR cannot deallocate the newer pseudo IMSI without risking that
+the SIM would configure that IMSI and then be locked out (unable to do any
+further location updates). Instead, the HLR proceeds like in a), but sends the
+same unused new pseudo IMSI again instead of allocating a new one.
 
-The SIM applet writes the new pseudo IMSI and session_id to the SIM card,
-overwriting the old data. It acknowledges the new data with a SMS back to the
-HLR:
+If the newer pseudo IMSI was used, the SIM applet has successfully set the new
+IMSI. The HLR deallocates the old pseudo IMSI and sends a Purge MS request to
+the VLR with the old pseudo IMSI. Then the HLR proceeds like in a).
 
-```
-HLR <-  SIM  NEW PSEUDO IMSI RESP ACK, session_id=1, imsi_pseudo=123
-```
+3. Arrival of the SMS
 
-4. The HLR verifies, that an entry with the session_id and imsi_pseudo from the
-NEW PSEUDO IMSI RESP ACK message exists in the table. If not, it discards the
-message.
+The SIM applet verifies, that imsi_pseudo_i is higher than the last
+imsi_pseudo_i it has seen (initially: 0). If that is not the case, it discards
+the message.
 
-HLR it deletes the old entry with the same IMSI (in the example: the one with
-imsi_pseudo=200).
+The SIM applet registers a timer to wait the specified delay. When the timer
+expires, the applet updates the last imsi_pseudo_i value that it has seen. Then
+it overwrites the IMSI with the next pseudo IMSI and invalidates the TMSI and
+Kc. The applet triggers a refresh, which causes the SIM to do a new Location
+Update with the new IMSI.
 
-|   id |   imsi |   imsi_pseudo |   session_id |
-|------|--------|---------------|--------------|
-|    2 |   100  |   123         | 1            |
-
-## Messages getting lost
-
-### What if "NEW PSEUDO IMSI REQ" gets lost?
-
-Both the old and the new pseudo IMSI entry exist in the HLR.
-
-The SIM will use the old pseudo IMSI in the next location update. The HLR will
-try to send _the same_ new pseudo IMSI with the same new session_id, as soon
-as the next location update is complete.
-
-### What if "NEW PSEUDO IMSI RESP" gets lost?
+### What if the SMS gets lost?
 
 Both the old and the new pseudo IMSI entry exist in the HLR.
 
-The SIM will use the new pseudo IMSI in the next location update. The HLR will
-then clean up the old pseudo IMSI entry, and proceed with generating a new
-pseudo IMSI entry and sending it to the SIM, as usually.
+The SIM will use the old pseudo IMSI in the next Location Update. The HLR will
+try to send _the same_ new pseudo IMSI with the same new imsi_pseudo_i, as soon
+as the next Location Update is complete.
 
-## Messages arriving late
+### What if the SMS arrives late?
 
-### What if "NEW PSEUDO IMSI REQ" arrives late?
-
-The session_id will not be higher than the session_id, which the SIM card
+The imsi_pseudo_i counter will not be higher than the value the SIM applet
 already knows. Therefore, the applet will discard the message.
-
-### What if "NEW PSEUDO IMSI RESP" arrives late?
-
-Session_id and imsi_pseudo from the message will not match what's in the HLR
-database, so HLR will discard the message.
 
 ## Warning the user if SMS don't arrive
 
-An attacker could possibly block the SMS with NEW PSEUDO IMSI REQ from arriving
-at the SIM applet. In that case, the SIM would continue using the old pseudo
-IMSI indefinitely.
+An attacker could possibly block the SMS from arriving at the SIM applet. In
+that case, the SIM would continue using the old pseudo IMSI indefinitely.
 
-We could possibly count the location updates done with the same pseudo IMSI in
-the SIM applet, and warn the user if the same pseudo IMSI has been used more
-than N (e.g. 5) times.
-
-(Could be possible by listening to EVENT_DOWNLOAD_LOCATION_STATUS?)
+We can count the location updates done with the same pseudo IMSI in the SIM
+applet, and warn the user if the same pseudo IMSI has been used more than N
+(e.g. 5) times.
 
 ## End2end encryption
 
@@ -141,4 +127,4 @@ It was considered to add an additional layer of end2end encryption for the
 pseudonymized IMSIs on top, but this is out-of-scope for this project. For
 reference, once could pre-provision a random "imsi_pseudo_key" with the SIM
 card, store it in the pseudo IMSI table in the HLR, and deploy a new encryption
-key together with each new pseudo IMSI, attached to the NEW PSEUDO IMSI REQ.
+key together with each new pseudo IMSI, attached to the SMS.
