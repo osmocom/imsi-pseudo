@@ -210,6 +210,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			mi = MobileIdentity.str2mi(newIMSI_str, MobileIdentity.MI_IMSI, (byte)9);
 			writeIMSI(mi);
 			showMsg(changed);
+			refreshIMSI();
 		} catch (Exception e) {
 			showError((short)42);
 		}
@@ -231,5 +232,32 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		gsmFile.select((short) SIMView.FID_DF_GSM);
 		gsmFile.select((short) SIMView.FID_EF_IMSI);
 		gsmFile.updateBinary((short)0, mi, (short)0, (short)mi.length);
+	}
+
+	/*
+	 * - command qualifiers for REFRESH,
+	 *   ETSI TS 101 267 / 3GPP TS 11.14 chapter 12.6 "Command details":
+	 *   '00' =SIM Initialization and Full File Change Notification;
+	 *   '01' = File Change Notification;
+	 *   '02' = SIM Initialization and File Change Notification;
+	 *   '03' = SIM Initialization;
+	 *   '04' = SIM Reset;
+	 *   '05' to 'FF' = reserved values.
+	 */
+	public static final byte SIM_REFRESH_SIM_INIT_FULL_FILE_CHANGE = 0x00;
+	public static final byte SIM_REFRESH_FILE_CHANGE = 0x01;
+	public static final byte SIM_REFRESH_SIM_INIT_FILE_CHANGE = 0x02;
+	public static final byte SIM_REFRESH_SIM_INIT = 0x03;
+	public static final byte SIM_REFRESH_SIM_RESET = 0x04;
+
+	/* Run the Proactive SIM REFRESH command for the FID_EF_IMSI. */
+	private void refreshIMSI()
+	{
+		/* See ETSI TS 101 267 / 3GPP TS 11.14 section 6.4.7.1 "EF IMSI changing procedure":
+		 * Valid qualifiers are SIM_REFRESH_SIM_INIT_FILE_CHANGE and SIM_REFRESH_SIM_INIT_FULL_FILE_CHANGE.
+		 */
+		ProactiveHandler proHdlr = ProactiveHandler.getTheHandler();
+		proHdlr.init((byte)PRO_CMD_REFRESH, SIM_REFRESH_SIM_INIT_FULL_FILE_CHANGE, DEV_ID_ME);
+		proHdlr.send();
 	}
 }
