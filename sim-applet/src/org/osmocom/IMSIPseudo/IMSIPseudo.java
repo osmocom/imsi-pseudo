@@ -212,6 +212,8 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			showMsg(changed);
 			invalidateTMSI((short)SIMView.FID_EF_LOCI);
 			invalidateTMSI((short)SIMView.FID_EF_LOCIGPRS);
+			invalidateKc((short)SIMView.FID_EF_KC);
+			invalidateKc((short)SIMView.FID_EF_KCGPRS);
 			refreshIMSI();
 		} catch (Exception e) {
 			showError((short)42);
@@ -242,6 +244,14 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		gsmFile.select((short) SIMView.FID_DF_GSM);
 		gsmFile.select(fid);
 		gsmFile.updateBinary((short)0, TMSI, (short)0, (short)TMSI.length);
+	}
+
+	private void invalidateKc(short fid)
+	{
+		byte[] Kc = {(byte)0x07}; /* proper N/A value, see 3GPP TS 31.102, chapter 4.4.3.1 */
+		gsmFile.select((short) SIMView.FID_DF_GSM);
+		gsmFile.select(fid);
+		gsmFile.updateBinary((short)0, Kc, (short)0, (short)Kc.length);
 	}
 
 	/*
