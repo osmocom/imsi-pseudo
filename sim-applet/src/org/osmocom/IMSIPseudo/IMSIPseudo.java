@@ -210,6 +210,8 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			mi = MobileIdentity.str2mi(newIMSI_str, MobileIdentity.MI_IMSI, (byte)9);
 			writeIMSI(mi);
 			showMsg(changed);
+			invalidateTMSI((short)SIMView.FID_EF_LOCI);
+			invalidateTMSI((short)SIMView.FID_EF_LOCIGPRS);
 			refreshIMSI();
 		} catch (Exception e) {
 			showError((short)42);
@@ -232,6 +234,14 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 		gsmFile.select((short) SIMView.FID_DF_GSM);
 		gsmFile.select((short) SIMView.FID_EF_IMSI);
 		gsmFile.updateBinary((short)0, mi, (short)0, (short)mi.length);
+	}
+
+	private void invalidateTMSI(short fid)
+	{
+		byte[] TMSI = {(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff};
+		gsmFile.select((short) SIMView.FID_DF_GSM);
+		gsmFile.select(fid);
+		gsmFile.updateBinary((short)0, TMSI, (short)0, (short)TMSI.length);
 	}
 
 	/*
