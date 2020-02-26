@@ -27,7 +27,7 @@ HLR <-> SIM  LOCATION UPDATE, imsi_pseudo=123
 
 ## In Detail
 
-1. Provisioning the SIM
+### 1. Provisioning the SIM
 
 The HLR allocates a new pseudo IMSI as random choice from the pool of available
 IMSIs. The pseudo IMSI must not be used by any other subscriber as pseudo IMSI,
@@ -41,7 +41,7 @@ imsi_pseudo_i is 0 for the first allocated IMSI for that subscriber.
 The pseudo IMSI is saved to the SIM as IMSI, instead of the real IMSI. The SIM
 is also provisioned with the IMSI pseudonymization applet.
 
-2. Successful Location Update with pseudo IMSI
+### 2. Successful Location Update with pseudo IMSI
 
 a) If this was the first Location Update after provisioning the SIM, the
 subscriber has only one pseudo IMSI allocated. The HLR waits for some time.
@@ -77,7 +77,7 @@ If the newer pseudo IMSI was used, the SIM applet has successfully set the new
 IMSI. The HLR deallocates the old pseudo IMSI and sends a Purge MS request to
 the VLR with the old pseudo IMSI. Then the HLR proceeds like in a).
 
-3. Arrival of the SMS
+### 3. Arrival of the SMS
 
 The SIM applet verifies, that imsi_pseudo_i is higher than the last
 imsi_pseudo_i it has seen (initially: 0). If that is not the case, it discards
@@ -102,7 +102,7 @@ as the next Location Update is complete.
 The imsi_pseudo_i counter will not be higher than the value the SIM applet
 already knows. Therefore, the applet will discard the message.
 
-## Warning the user if SMS don't arrive
+### Warning the user if SMS don't arrive
 
 An attacker could possibly block the SMS from arriving at the SIM applet. In
 that case, the SIM would continue using the old pseudo IMSI indefinitely.
@@ -111,7 +111,7 @@ We can count the location updates done with the same pseudo IMSI in the SIM
 applet, and warn the user if the same pseudo IMSI has been used more than N
 (e.g. 5) times.
 
-## End2end encryption
+### End2end encryption
 
 When deploying the IMSI pseudonymization, the operator should make sure that
 the pseudo IMSI related SMS between the HLR and the SIM cannot be read or
