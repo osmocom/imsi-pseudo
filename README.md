@@ -125,6 +125,6 @@ configured).
 
 It was considered to add an additional layer of end2end encryption for the
 pseudonymized IMSIs on top, but this is out-of-scope for this project. For
-reference, once could pre-provision a random "imsi_pseudo_key" with the SIM
+reference, one could pre-provision a random "imsi_pseudo_key" with the SIM
 card, store it in the pseudo IMSI table in the HLR, and deploy a new encryption
 key together with each new pseudo IMSI, attached to the SMS.
