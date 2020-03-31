@@ -128,3 +128,16 @@ pseudonymized IMSIs on top, but this is out-of-scope for this project. For
 reference, one could pre-provision a random "imsi_pseudo_key" with the SIM
 card, store it in the pseudo IMSI table in the HLR, and deploy a new encryption
 key together with each new pseudo IMSI, attached to the SMS.
+
+### User-configurable minimum duration between IMSI changes
+
+It may be desirable to let users configure their minimum duration between IMSI
+changes. This allows people with a high privacy requirement to switch their
+pseudonymous IMSI more often, and it allows the IMSI change to happen less
+often if it is distracting to the user. The latter depends on the phone's
+software, for example:
+* A Samsung GT-I9100 Galaxy SII smartphone with Android 4.0.3 displays a
+  message at the bottom of the screen for about 5 seconds, but the user
+  interface remains usable.
+* A Samsung GT-E1200 feature phone displays a waiting screen for 16 to 17
+  seconds and is unusable during that time.
