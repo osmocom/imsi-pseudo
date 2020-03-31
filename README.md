@@ -25,7 +25,7 @@ HLR <-> SIM  LOCATION UPDATE, imsi_pseudo=123
 ...
 ```
 
-## In Detail
+## In detail
 
 ### 1. Provisioning the SIM
 
@@ -88,6 +88,8 @@ expires, the applet updates the last imsi_pseudo_i value that it has seen. Then
 it overwrites the IMSI with the next pseudo IMSI and invalidates the TMSI and
 Kc. The applet triggers a refresh, which causes the SIM to do a new Location
 Update with the new IMSI.
+
+## Notes
 
 ### What if the SMS gets lost?
 
