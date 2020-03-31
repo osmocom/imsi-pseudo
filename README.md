@@ -89,6 +89,11 @@ it overwrites the IMSI with the next pseudo IMSI and invalidates the TMSI and
 Kc. The applet triggers a refresh, which causes the SIM to do a new Location
 Update with the new IMSI.
 
+It is important, that the SIM does not invoke the IMSI detach procedure (TS
+04.08 Section 4.3.4). This is controlled by the network. Otherwise it becomes
+trivial to correlate the detach of the old IMSI with the attach or Location
+Update of the new IMSI.
+
 ## Notes
 
 ### What if the SMS gets lost?
