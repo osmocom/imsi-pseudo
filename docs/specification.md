@@ -3,6 +3,9 @@
 Relevant specs:
 * 3GPP TS 23.008: Organization of subscriber data
   * Add pseudo IMSI and pseudo_imsi_i optionally to be saved in the HLR
+* "Process Update_Location_HLR" of TS 09.02
+  * Cancel location in old VLR/SGSN if IMSI pseudonymization is enabled, and a
+    previous pseudonymous IMSI exists for the subscriber
 
 Optional additions we need to make, and where to make them:
 
