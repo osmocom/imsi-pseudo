@@ -1,5 +1,7 @@
 # [WIP] Make IMSI Pseudonymization an optional extension of 3GPP TS
 
+NOTE: this file is deprecated, it will be replaced by imsi-pseudo-spec.adoc.
+
 Relevant specs:
 * 3GPP TS 23.008: Organization of subscriber data
   * Add pseudo IMSI and pseudo_imsi_i optionally to be saved in the HLR
