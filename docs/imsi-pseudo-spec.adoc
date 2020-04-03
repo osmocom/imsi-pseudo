@@ -1,1 +1,41 @@
-= IMSI Pseudonymization
+= Specification for IMSI Pseudonymization on the Radio Interface for 2G and Above
+
+== Introduction
+
+A long-standing issue in the 3GPP specifications is, that mobile phones and
+other mobile equipment (ME) have to send the International Mobile Subscriber
+Identity (IMSI) unencrypted over the air. Each IMSI is uniquely identifying the
+person who bought the associated Subscriber Identity Module (SIM) used in the
+ME. Therefore most people can be uniquely identified by recording the IMSI that
+their ME is sending. Efforts are made in the 2G and above specifications to
+send the IMSI less often, and where possible use the Temporary Mobile
+Subscriber Identity (TMSI) instead.
+
+But this is not enough. So-called IMSI catchers were invented and are used to
+not only record IMSIs when they have to be sent. But also to force ME to send
+their IMSI by immitating a Base Transceiver Station (BTS). IMSI catchers have
+become small and affordable, even criminals actors without much budget can use
+them to track anybody with a mobile phone.
+
+The solution presented in this document is to periodically change the IMSI of
+the ME to a new pseudonymous IMSI allocated by the Home Location Register (HLR)
+or Home Subscriber Service (HSS). The only component that needs to be changed
+in the network besides the SIM is the HLR/HSS, therefore it should be possible
+for a Mobile Virtual Network Operator (MVNO) to deploy this privacy
+enhancement.
+
+== Location Update
+
+=== Regular
+
+=== With Pseudonymous IMSI
+
+== Implementation Notes
+
+=== Source Code for Reference Implementation
+
+=== Warning the User if the IMSI Does Not Change
+
+=== End to End Encryption of SMS
+
+=== User-configurable Minimum Duration Between IMSI Changes
