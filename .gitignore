@@ -3,3 +3,7 @@ sim-applet/build
 sim-applet/test
 .sim-keys*
 sim-keys*
+docs/*.pdf
+docs/build
+docs/common
+docs/*.png
