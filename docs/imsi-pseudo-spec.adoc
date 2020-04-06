@@ -8,8 +8,8 @@ Identity (IMSI) unencrypted over the air. Each IMSI is uniquely identifying the
 person who bought the associated Subscriber Identity Module (SIM) used in the
 ME. Therefore most people can be uniquely identified by recording the IMSI that
 their ME is sending. Efforts are made in the 2G and above specifications to
-send the IMSI less often, and where possible use the Temporary Mobile
-Subscriber Identity (TMSI) instead.
+send the IMSI less often, by using the Temporary Mobile Subscriber Identity
+(TMSI) where possible.
 
 But this is not enough. So-called IMSI catchers were invented and are used to
 not only record IMSIs when they have to be sent. But also to force ME to send
@@ -21,18 +21,113 @@ The solution presented in this document is to periodically change the IMSI of
 the ME to a new pseudonymous IMSI allocated by the Home Location Register (HLR)
 or Home Subscriber Service (HSS). The only component that needs to be changed
 in the network besides the SIM is the HLR/HSS, therefore it should be possible
-for a Mobile Virtual Network Operator (MVNO) to deploy this privacy
+even for a Mobile Virtual Network Operator (MVNO) to deploy this privacy
 enhancement.
 
-== Location Update
+== Location Updating
 
 === Regular
 
-=== With Pseudonymous IMSI
+The SIM is provisioned with the IMSI (3GPP TS 23.008 section 2.1.9) and
+cryptographic keys, that it uses to authenticate with the network. In the
+Remote Access Network (RAN), the IMSI is sent over the air interface and then
+transmitted to the Core Network (CN), where it is validated by the HLR/HSS.
+The involved components vary by the generation of the network and whether the
+SIM is attempting a Circuit Switched (CS) or Packet Switched (PS) connection.
+But the principle is the same and looks like <<figure-imsi-regular>> for 2G CS
+Location Updating with IMSI.
+
+The IMSI is transmitted in the Location Updating Request from ME. The VLR
+needs an authentication challenge specific to the secret keys on the SIM to
+authenticate the SIM, and looks the authentication challenges up by the IMSI.
+If the VLR does not have any more authentication challenges for the IMSI (as it
+happens when the VLR sees the IMSI for the first time), the VLR requests new
+authentication challenges from the HLR. Then the HLR verifies that the IMSI is
+known and, if it is unknown, sends back an error that will terminate the
+Location Updating procedure.
+
+After the VLR found the authentication challenge, it authenticates the SIM, and
+performs a Classmark Enquiry and Physical Channel Reconfiguration. Then the VLR
+has the required information to finish the Location Updating, and continues
+with an Update Location Request procedure with the HLR. Afterwards, the VLR
+assigns a new TMSI with the Location Updating Accept, which is acknowledged by
+the TMSI Reallocation Complete. In following Location Updates with the same
+MSC, the ME sends the TMSI instead of the IMSI in the Location Updating
+Request.
+
+[[figure-imsi-regular]]
+.Location Updating in 2G CS with IMSI
+["mscgen"]
+----
+msc {
+  hscale="1.75";
+  ME [label="ME"], BTS [label="BTS"], BSC [label="BSC"], MSC [label="MSC/VLR"],
+  HLR [label="HLR"];
+
+  // BTS <=> BSC: RSL
+  // BSC <=> MSC: BSSAP, RNSAP
+  // MSC <=> HLR: MAP (process Update_Location_HLR, 3GPP TS 29.002)
+
+  ME   => BTS [label="Location Updating Request"];
+  BTS  => BSC [label="Location Updating Request"];
+  BSC  => MSC [label="Location Updating Request"];
+
+  --- [label="VLR requests new authentication challenges for this IMSI if necessary"];
+  MSC  => HLR [label="Send Auth Info Request"];
+  MSC <=  HLR [label="Send Auth Info Result"];
+  ---;
+
+  BSC <=  MSC [label="Authentication Request"];
+  BTS <=  BSC [label="Authentication Request"];
+  ME  <=  BTS [label="Authentication Request"];
+  ME   => BTS [label="Authentication Response"];
+  BTS  => BSC [label="Authentication Response"];
+  BSC  => MSC [label="Authentication Response"];
+  BSC <=  MSC [label="Classmark Enquiry"];
+  BTS <=  BSC [label="Classmark Enquiry"];
+  ME  <=  BTS [label="Classmark Enquiry"];
+  ME   => BTS [label="Classmark Change"];
+  BTS  => BSC [label="Classmark Change"];
+  BSC  => MSC [label="Classmark Update"];
+  BSC <=  MSC [label="Physical Channel Reconfiguration"];
+  BTS <=  BSC [label="Ciphering Mode Command"];
+  ME  <=  BTS [label="Ciphering Mode Command"];
+  ME  =>  BTS [label="Ciphering Mode Complete"];
+  BTS  => BSC [label="Ciphering Mode Complete"];
+  BSC  => MSC [label="Ciphering Mode Complete"];
+
+  MSC  => HLR [label="Update Location Request"];
+  MSC <=  HLR [label="Insert Subscriber Data Request"];
+  MSC  => HLR [label="Insert Subscriber Data Result"];
+  MSC <=  HLR [label="Update Location Result"];
+
+  BSC <=  MSC [label="Location Updating Accept"];
+  BTS <=  BSC [label="Location Updating Accept"];
+  ME  <=  BTS [label="Location Updating Accept"];
+  ME   => BTS [label="TMSI Reallocation Complete"];
+  BTS  => BSC [label="TMSI Reallocation Complete"];
+}
+----
+
+=== With IMSI Pseudonymization
+
+==== SIM Provisioning
+
+==== Successful Location Update With Pseudonymous IMSI
+
+==== Next Pseudonymous IMSI Arrives Via SMS
+
+==== Error Handling
+
+===== SMS is Lost
+
+===== SMS Arrives Late
 
 == Implementation Notes
 
 === Source Code for Reference Implementation
+
+=== ATT = 0 required
 
 === Warning the User if the IMSI Does Not Change
 
