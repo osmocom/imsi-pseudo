@@ -24,9 +24,7 @@ in the network besides the SIM is the HLR/HSS, therefore it should be possible
 even for a Mobile Virtual Network Operator (MVNO) to deploy this privacy
 enhancement.
 
-== Location Updating
-
-=== Regular
+== Summary of Existing Location Updating Procedures in RAN and CN
 
 The SIM is provisioned with the IMSI (3GPP TS 23.008 section 2.1.9) and
 cryptographic keys, that it uses to authenticate with the network. In the
@@ -106,31 +104,27 @@ msc {
   ME  <=  BTS [label="Location Updating Accept"];
   ME   => BTS [label="TMSI Reallocation Complete"];
   BTS  => BSC [label="TMSI Reallocation Complete"];
+  BSC  => MSC [label="TMSI Reallocation Complete"];
 }
 ----
 
-=== With IMSI Pseudonymization
 
-==== SIM Provisioning
+== Required Changes
+=== SIM Provisioning
+=== Successful Location Update With Pseudonymous IMSI
+=== Next Pseudonymous IMSI Arrives Via SMS
 
-==== Successful Location Update With Pseudonymous IMSI
+== Error Scenarios
+=== Next Pseudonymous IMSI SMS is Lost
+=== SMS Arrives Late
 
-==== Next Pseudonymous IMSI Arrives Via SMS
+== Reference Implementation with Source Code
 
-==== Error Handling
-
-===== SMS is Lost
-
-===== SMS Arrives Late
-
-== Implementation Notes
-
-=== Source Code for Reference Implementation
-
-=== ATT = 0 required
-
-=== Warning the User if the IMSI Does Not Change
-
+== Recommendations for Real-World Implementations
+=== ATT = 0
 === End to End Encryption of SMS
-
+=== Warning the User if the IMSI Does Not Change
 === User-configurable Minimum Duration Between IMSI Changes
+
+<<<
+include::./common/chapters/gfdl.adoc[]
