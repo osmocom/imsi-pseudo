@@ -2,6 +2,8 @@
 
 == Introduction
 
+=== Protecting the IMSI on the Radio Interface is Desirable
+
 A long-standing issue in the 3GPP specifications is, that mobile phones and
 other mobile equipment (ME) have to send the International Mobile Subscriber
 Identity (IMSI) unencrypted over the air. Each IMSI is uniquely identifying the
@@ -17,14 +19,18 @@ their IMSI by immitating a Base Transceiver Station (BTS). IMSI catchers have
 become small and affordable, even criminals actors without much budget can use
 them to track anybody with a mobile phone.
 
+=== Summary of Proposed Solution
+
 The solution presented in this document is to periodically change the IMSI of
 the ME to a new pseudonymous IMSI allocated by the Home Location Register (HLR)
-or Home Subscriber Service (HSS). The only component that needs to be changed
-in the network besides the SIM is the HLR/HSS, therefore it should be possible
-even for a Mobile Virtual Network Operator (MVNO) to deploy this privacy
+or Home Subscriber Service (HSS). The next pseudonymous IMSI is sent to the SIM
+via Short Message Service (SMS), then a SIM applet overwrites the IMSI of the
+SIM with the new value. The only component that needs to be changed in the
+network besides the SIM is the HLR/HSS, therefore it should be possible even
+for a Mobile Virtual Network Operator (MVNO) to deploy this privacy
 enhancement.
 
-== Summary of Existing Location Updating Procedures in RAN and CN
+=== Summary of Existing Location Updating Procedures in RAN and CN
 
 The subscriber's SIM is provisioned with the IMSI and cryptographic keys of a
 subscriber, after the subscriber was added with the same data to the HLR/HSS.
@@ -108,14 +114,57 @@ msc {
 }
 ----
 
+<<<
 == Required Changes
+
+=== Pseudonymous IMSI Storage in the HLR
+
+The HLR must store up to two pseudonymous IMSIs (imsi_pseudo) and their related
+counters (imsi_pseudo_i) per subscriber. Each subscriber initially has one
+pseudonymous IMSI allocated. A subscriber has two valid pseudonymous IMSIs
+only during the transition phase from the old pseudonymous IMSI to the new one.
+The amount of available IMSIs must be higher than the amount of subscribers
+registered with the HLR. If the amount of available IMSIs is too short, the HLR
+can delay assigning new pseudonymous IMSIs until new IMSIs are available again.
+
+.Examples for additional subscriber data in HLR
+|===
+| Subscriber ID | imsi_pseudo | imsi_pseudo_i
+// example IMSIs taken from Wikipedia
+| 123
+| 310150123456789
+| 1
+
+| 234
+| 502130123456789
+| 1
+
+| 234
+| 460001357924680
+| 2
+|===
+
+==== imsi_pseudo
+
+The value for imsi_pseudo is a random choice from the pool of available IMSIs
+that the HLR controls. The pseudonymous IMSI must not be used by any subscriber
+as pseudonymous IMSI yet, but may be the real IMSI of a subscriber.
+
+==== imsi_pseudo_i
+
+The counter imsi_pseudo_i indicates how often a subscriber's pseudonymous IMSI
+was changed. The value is one for the first allocated pseudonymous IMSI of
+a subscriber. When allocating a new pseudonymous IMSI for the same subscriber,
+the new imsi_pseudo_i value is increased by one. The counter is used by the SIM
+applet to detect and ignore outdated requests related to changing the
+pseudonymous IMSI.
 
 === SIM Provisioning
 
-
-
-
 === Successful Location Update With Pseudonymous IMSI
+
+// HLR may choose not to give out next IMSI if it is short on available IMSIS
+
 === Next Pseudonymous IMSI Arrives Via SMS
 
 == Error Scenarios
