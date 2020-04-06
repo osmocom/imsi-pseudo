@@ -26,14 +26,14 @@ enhancement.
 
 == Summary of Existing Location Updating Procedures in RAN and CN
 
-The SIM is provisioned with the IMSI (3GPP TS 23.008 section 2.1.9) and
-cryptographic keys, that it uses to authenticate with the network. In the
-Remote Access Network (RAN), the IMSI is sent over the air interface and then
-transmitted to the Core Network (CN), where it is validated by the HLR/HSS.
-The involved components vary by the generation of the network and whether the
-SIM is attempting a Circuit Switched (CS) or Packet Switched (PS) connection.
-But the principle is the same and looks like <<figure-imsi-regular>> for 2G CS
-Location Updating with IMSI.
+The subscriber's SIM is provisioned with the IMSI and cryptographic keys of a
+subscriber, after the subscriber was added with the same data to the HLR/HSS.
+In the Remote Access Network (RAN), the IMSI is sent over the air interface and
+then transmitted to the Core Network (CN), where it is validated by the
+HLR/HSS. The involved components vary by the generation of the network and
+whether the SIM is attempting a Circuit Switched (CS) or Packet Switched (PS)
+connection, but the principle is the same. This document uses 2G CS Location
+Updating for reference, as in <<figure-imsi-regular>>.
 
 The IMSI is transmitted in the Location Updating Request from ME. The VLR
 needs an authentication challenge specific to the secret keys on the SIM to
@@ -108,9 +108,13 @@ msc {
 }
 ----
 
-
 == Required Changes
+
 === SIM Provisioning
+
+
+
+
 === Successful Location Update With Pseudonymous IMSI
 === Next Pseudonymous IMSI Arrives Via SMS
 
