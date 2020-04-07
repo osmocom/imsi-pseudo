@@ -192,7 +192,9 @@ next SMS. Afterwards, the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section
 === Process Update_Location_HLR
 
 All IMSI Pseudonymization related changes to Process Update_Location_HLR
-(3GPP TS 29.002) are optional.
+(3GPP TS 29.002) are optional. All deviations from the existing specification
+that are outlined in this section are expected to be enabled or disabled
+entirely where IMSI pseudonymization is implemented.
 
 * HLR looks up subscriber by pseudonymous imsi in Update Location Request
 * if two pseudo imsi found, and connected with new one: dealloc old entry
