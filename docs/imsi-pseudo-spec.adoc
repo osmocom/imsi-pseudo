@@ -96,7 +96,7 @@ msc {
   BSC <=  MSC [label="Physical Channel Reconfiguration"];
   BTS <=  BSC [label="Ciphering Mode Command"];
   ME  <=  BTS [label="Ciphering Mode Command"];
-  ME  =>  BTS [label="Ciphering Mode Complete"];
+  ME   => BTS [label="Ciphering Mode Complete"];
   BTS  => BSC [label="Ciphering Mode Complete"];
   BSC  => MSC [label="Ciphering Mode Complete"];
 
@@ -153,9 +153,9 @@ as pseudonymous IMSI yet, but may be the real IMSI of a subscriber.
 ==== imsi_pseudo_i
 
 The counter imsi_pseudo_i indicates how often a subscriber's pseudonymous IMSI
-was changed. The value is one for the first allocated pseudonymous IMSI of
-a subscriber. When allocating a new pseudonymous IMSI for the same subscriber,
-the new imsi_pseudo_i value is increased by one. The counter is used by the SIM
+was changed. The value is 1 for the first allocated pseudonymous IMSI of a
+subscriber. When allocating a new pseudonymous IMSI for the same subscriber,
+the new imsi_pseudo_i value is increased by 1. The counter is used by the SIM
 applet to detect and ignore outdated requests related to changing the
 pseudonymous IMSI.
 
