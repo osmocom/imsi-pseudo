@@ -188,7 +188,6 @@ next SMS. Afterwards, the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section
 
 // FIXME: do we need to enforce the LU now, with an arbitrary CM Service
 // Request, or would this only be necessary for Osmocom? (OS#4404)
-
 === Process Update_Location_HLR
 
 All IMSI Pseudonymization related changes to Process Update_Location_HLR
@@ -196,29 +195,7 @@ All IMSI Pseudonymization related changes to Process Update_Location_HLR
 that are outlined in this section are expected to be enabled or disabled
 entirely where IMSI pseudonymization is implemented.
 
-* HLR looks up subscriber by pseudonymous imsi in Update Location Request
-* if two pseudo imsi found, and connected with new one: dealloc old entry
-* if two pseudo imsi found and connected with old one: do not dealloc!
-
-* after update location result: set new timer for sending next IMSI to random delay
-
-==== Send Next Pseudonymous IMSI
-
-* if subscriber has two pseudo IMSI, send the new one
-* if subscriber has only one pseudo IMSI:
-  * abort if not enough IMSIs available
-  * generate new pseudo IMSI as described earlier
-  * set imsi_pseudo_i like last one + 1
-* send SMS to subscriber's SIM
-
-[[sms-format]]
-==== SMS Format
-
-* min_sleep_time
-* imsi_pseudo
-* imsi_pseudo_i
-
-[[figure-]]
+[[figure-imsi-pseudo]]
 .Process Update_Location_HLR with IMSI pseudonymization changes
 ["mscgen"]
 ----
@@ -251,6 +228,52 @@ msc {
   SMSC box SMSC [label="Deliver SMS to ME"];
 }
 ----
+
+==== Update Location Request
+When Update Location Request arrives, the HLR does not look up the subscriber
+by the IMSI, but by the pseudonymous IMSI instead. Unless the subscriber has
+two pseudonymous IMSI allocated and used the old pseudonymous IMSI in the
+Update Location Request, this is followed by the existing logic to continue with
+Insert Subscriber Data Request.
+
+===== Update Location Request With New Pseudonymous IMSI
+
+If the subscriber has two pseudonymous IMSIs allocated, and the newer entry was
+used (higher imsi_pseudo_i, see <<hlr-imsi-pseudo-i>>), this section applies.
+The older pseudonymous IMSI is deallocated in the HLR. This is done as early
+as possible, so the timeframe where two pseudonymous IMSI are allocated for one
+subscriber is short.
+
+A Cancel Location Request with the old pseudonymous IMSI is sent to the VLR, so
+the conflicting subscriber entry with the old pseudonymous IMSI is deleted from
+the VLR. Receiving a Cancel Location Result is followed by the existing logic
+to continue with Insert Subscriber Data Request.
+
+===== Update Location Request With Old Pseudonymous IMSI
+
+If the subscriber has two pseudonymous IMSIs allocated, and the older entry was
+used (lower imsi_pseudo_i, see <<hlr-imsi-pseudo-i>>), the newer entry is _not_
+deallocated. This could lock out the subscriber from the network if the SMS
+with the new pseudonymous IMSI arrives with a delay.
+
+==== Insert Subscriber Data Result
+
+ISD works like before, then set Next_Pseudo_IMSI_Timer
+
+==== Next_Pseudo_IMSI_Timer Expires
+
+* if subscriber has only one pseudo IMSI:
+  * abort if not enough IMSIs available
+  * generate new pseudo IMSI as described earlier
+  * set imsi_pseudo_i like last one + 1
+* send SMS to subscriber's SIM with newer pseudo IMSI
+
+[[sms-format]]
+==== SMS Format
+
+* min_sleep_time
+* imsi_pseudo
+* imsi_pseudo_i
 
 == Error Scenarios
 === Next Pseudonymous IMSI SMS is Lost
