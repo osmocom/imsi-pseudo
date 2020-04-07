@@ -150,6 +150,7 @@ The value for imsi_pseudo is a random choice from the pool of available IMSIs
 that the HLR controls. The pseudonymous IMSI must not be used by any subscriber
 as pseudonymous IMSI yet, but may be the real IMSI of a subscriber.
 
+[[hlr-imsi-pseudo-i]]
 ==== imsi_pseudo_i
 
 The counter imsi_pseudo_i indicates how often a subscriber's pseudonymous IMSI
@@ -161,9 +162,42 @@ pseudonymous IMSI.
 
 === SIM Provisioning
 
+The HLR is allocating a pseudonymous IMSI for the subscriber. This pseudonymous
+IMSI is stored as IMSI on the subscriber's SIM instead of the real IMSI.
+
+==== SIM applet
+
+The SIM is provisioned with a SIM applet, which is able to change the IMSI once
+the next pseudonymous IMSI arrives from the HLR. A reference implementation is
+provided in <<reference-src>>.
+
+The SIM applet registers to a suitable SMS trigger (3GPP TS 03.19, Section
+6.2). When an SMS from the HLR in the format of <<sms-format>> arrives, the
+applet must verify that the SMS is not outdated by comparing imsi_pseudo_i from
+the SMS with the last imsi_pseudo_i that was used when changing the IMSI
+(initially 1 as in <<hlr-imsi-pseudo-i>>). The new value must be higher,
+otherwise the SMS should not be processed further.
+
+The SIM applet registers a timer with min_sleep_time from the SMS. When the
+timer triggers, the IMSI of the SIM is overwritten with the new pseudonymous
+IMSI, the TMSI and GSM Ciphering key Kc (3GPP TS 31.102, Section 4.4.3.1) are
+invalidated. The current imsi_pseudo_i value is stored to compare it with the
+next SMS. Afterwards, the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section
+6.4.7.1 is executed to apply the new IMSI.
+
+// FIXME: do we need to enforce the LU now, with an arbitrary CM Service
+// Request, or would this only be necessary for Osmocom? (OS#4404)
+
 === Successful Location Update With Pseudonymous IMSI
 
-// HLR may choose not to give out next IMSI if it is short on available IMSIS
+// HLR may choose not to give out next IMSI if it is short on available IMSIs
+
+[[sms-format]]
+==== Format of the SMS
+
+* min_sleep_time
+* imsi_pseudo
+* imsi_pseudo_i
 
 === Next Pseudonymous IMSI Arrives Via SMS
 
@@ -171,6 +205,10 @@ pseudonymous IMSI.
 === Next Pseudonymous IMSI SMS is Lost
 === SMS Arrives Late
 
+// === SMS Arrives Before Timer Expires
+// FIXME: OS#4486
+
+[[reference-src]]
 == Reference Implementation with Source Code
 
 == Recommendations for Real-World Implementations
