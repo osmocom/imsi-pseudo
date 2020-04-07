@@ -75,7 +75,7 @@ msc {
   BTS  => BSC [label="Location Updating Request"];
   BSC  => MSC [label="Location Updating Request"];
 
-  --- [label="VLR requests new authentication challenges for this IMSI if necessary"];
+  --- [label="If necessary: VLR requests new authentication challenges for this IMSI"];
   MSC  => HLR [label="Send Auth Info Request"];
   MSC <=  HLR [label="Send Auth Info Result"];
   ---;
@@ -227,19 +227,26 @@ msc {
   MSC [label="MSC/VLR"], SMSC [label="SMS-SC"], HLR [label="HLR"];
 
   MSC   => HLR  [label="Update Location Request"];
-  HLR box HLR [label="\nDeallocate old Pseudonymous IMSI,\n if new Pseudonymous IMSI was used\n"];
+
+  --- [label="If new pseudonymous IMSI was used: deallocate and cancel old pseudonymous IMSI"];
+  HLR box  HLR  [label="Deallocate old pseudonymous IMSI"];
+  MSC  <=  HLR  [label="Cancel Location Request"];
+  MSC   => HLR  [label="Cancel Location Result"];
+  ---;
+
   MSC  <=  HLR  [label="Insert Subscriber Data Request"];
   MSC   => HLR  [label="Insert Subscriber Data Result"];
-  HLR box HLR [label="Start Next_Pseudo_IMSI_Timer"];
+  HLR box  HLR  [label="Start Next_Pseudo_IMSI_Timer"];
   MSC  <=  HLR  [label="Update Location Result"];
+  MSC box  MSC  [label="Finish Location Updating with ME"],
 
-  MSC box MSC [label="Finish Location Updating with ME"],
-  HLR box HLR [label="Wait for Next_Pseudo_IMSI_Timer expiry"];
+  HLR box  HLR  [label="Wait for Next_Pseudo_IMSI_Timer expiry"];
   |||;
   ...;
   |||;
-  HLR box HLR [label="Next_Pseudo_IMSI_Timer expired"];
-  HLR box HLR [label="\nAllocate new Pseudonymous IMSI\nif subscriber only has one allocated\n"];
+  HLR box  HLR  [label="Next_Pseudo_IMSI_Timer expired"];
+
+  HLR box  HLR  [label="\nAllocate new pseudonymous IMSI\nif subscriber only has one allocated\n"];
   SMSC <=  HLR  [label="Next Pseudonymous IMSI SMS"];
   SMSC box SMSC [label="Deliver SMS to ME"];
 }
