@@ -257,7 +257,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 	/*
 	 * - command qualifiers for REFRESH,
 	 *   ETSI TS 101 267 / 3GPP TS 11.14 chapter 12.6 "Command details":
-	 *   '00' =SIM Initialization and Full File Change Notification;
+	 *   '00' = SIM Initialization and Full File Change Notification;
 	 *   '01' = File Change Notification;
 	 *   '02' = SIM Initialization and File Change Notification;
 	 *   '03' = SIM Initialization;
