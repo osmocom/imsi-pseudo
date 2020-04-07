@@ -53,11 +53,10 @@ Location Updating procedure.
 After the VLR found the authentication challenge, it authenticates the SIM, and
 performs a Classmark Enquiry and Physical Channel Reconfiguration. Then the VLR
 has the required information to finish the Location Updating, and continues
-with an Update Location Request procedure with the HLR. Afterwards, the VLR
-assigns a new TMSI with the Location Updating Accept, which is acknowledged by
-the TMSI Reallocation Complete. In following Location Updates with the same
-MSC, the ME sends the TMSI instead of the IMSI in the Location Updating
-Request.
+with Process Update_Location_HLR (3GPP TS 29.002). Afterwards, the VLR assigns
+a new TMSI with the Location Updating Accept, which is acknowledged by the TMSI
+Reallocation Complete. In following Location Updates with the same MSC, the ME
+sends the TMSI instead of the IMSI in the Location Updating Request.
 
 [[figure-imsi-regular]]
 .Location Updating in 2G CS with IMSI
@@ -100,10 +99,12 @@ msc {
   BTS  => BSC [label="Ciphering Mode Complete"];
   BSC  => MSC [label="Ciphering Mode Complete"];
 
+  --- [label="Process Update_Location_HLR (3GPP TS 29.002)"];
   MSC  => HLR [label="Update Location Request"];
   MSC <=  HLR [label="Insert Subscriber Data Request"];
   MSC  => HLR [label="Insert Subscriber Data Result"];
   MSC <=  HLR [label="Update Location Result"];
+  ---;
 
   BSC <=  MSC [label="Location Updating Accept"];
   BTS <=  BSC [label="Location Updating Accept"];
@@ -188,18 +189,59 @@ next SMS. Afterwards, the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section
 // FIXME: do we need to enforce the LU now, with an arbitrary CM Service
 // Request, or would this only be necessary for Osmocom? (OS#4404)
 
-=== Successful Location Update With Pseudonymous IMSI
+=== Process Update_Location_HLR
 
-// HLR may choose not to give out next IMSI if it is short on available IMSIs
+All IMSI Pseudonymization related changes to Process Update_Location_HLR
+(3GPP TS 29.002) are optional.
+
+* HLR looks up subscriber by pseudonymous imsi in Update Location Request
+* if two pseudo imsi found, and connected with new one: dealloc old entry
+* if two pseudo imsi found and connected with old one: do not dealloc!
+
+* after update location result: set new timer for sending next IMSI to random delay
+
+==== Send Next Pseudonymous IMSI
+
+* if subscriber has two pseudo IMSI, send the new one
+* if subscriber has only one pseudo IMSI:
+  * abort if not enough IMSIs available
+  * generate new pseudo IMSI as described earlier
+  * set imsi_pseudo_i like last one + 1
+* send SMS to subscriber's SIM
 
 [[sms-format]]
-==== Format of the SMS
+==== SMS Format
 
 * min_sleep_time
 * imsi_pseudo
 * imsi_pseudo_i
 
-=== Next Pseudonymous IMSI Arrives Via SMS
+[[figure-]]
+.Process Update_Location_HLR with IMSI pseudonymization changes
+["mscgen"]
+----
+msc {
+  hscale="1.75";
+  MSC [label="MSC/VLR"], SMSC [label="SMS-SC"], HLR [label="HLR"];
+
+  MSC   => HLR  [label="Update Location Request"];
+  HLR box HLR [label="\nDeallocate old Pseudonymous IMSI,\n if new Pseudonymous IMSI was used\n"];
+  MSC  <=  HLR  [label="Insert Subscriber Data Request"];
+  MSC   => HLR  [label="Insert Subscriber Data Result"];
+  HLR box HLR [label="Start Next_Pseudo_IMSI_Timer"];
+  MSC  <=  HLR  [label="Update Location Result"];
+
+  MSC box MSC [label="Finish Location Updating with ME"],
+  HLR box HLR [label="Wait for Next_Pseudo_IMSI_Timer expiry"];
+  |||;
+  ...;
+  |||;
+  HLR box HLR [label="Next_Pseudo_IMSI_Timer expired"];
+  HLR box HLR [label="\nAllocate new Pseudonymous IMSI\nif subscriber only has one allocated\n"];
+  SMSC <=  HLR  [label="Next Pseudonymous IMSI SMS"];
+  SMSC box SMSC [label="Deliver SMS to ME"];
+}
+----
 
 == Error Scenarios
 === Next Pseudonymous IMSI SMS is Lost
