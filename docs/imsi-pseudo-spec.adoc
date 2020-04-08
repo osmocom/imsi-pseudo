@@ -190,6 +190,7 @@ next SMS. Afterwards, the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section
 
 // FIXME: do we need to enforce the LU now, with an arbitrary CM Service
 // Request, or would this only be necessary for Osmocom? (OS#4404)
+[[process-update-location-hlr]]
 === Process Update_Location_HLR
 
 All IMSI Pseudonymization related changes to Process Update_Location_HLR
@@ -345,6 +346,17 @@ will discard the message and the subscriber is not locked out of the network.
 
 [[reference-src]]
 == Reference Implementation with Source Code
+
+A reference implementation for the SIM applet (<<sim-app>>) is available in
+source code under the Apache-2.0 license at:
+
+https://osmocom.org/projects/imsi-pseudo
+
+The HLR modifications described in <<hlr-imsi-pseudo-storage>> and
+<<process-update-location-hlr>> were implemented for reference in OsmoHLR from
+the Osmocom project, licensed under AGPL-3.0. Information about the source code
+and related branches for IMSI pseudonymization can be found at the above URL as
+well.
 
 == Recommendations for Real-World Implementations
 === ATT = 0
