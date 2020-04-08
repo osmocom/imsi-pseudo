@@ -167,6 +167,7 @@ pseudonymous IMSI.
 The HLR is allocating a pseudonymous IMSI for the subscriber. This pseudonymous
 IMSI is stored as IMSI on the subscriber's SIM instead of the real IMSI.
 
+[[sim-app]]
 ==== SIM applet
 
 The SIM is provisioned with a SIM applet, which is able to change the IMSI once
@@ -316,8 +317,28 @@ PAD: 8 bits::
 Padding at the end, should be filled with 1111 as in the TBCD specification.
 
 == Error Scenarios
+
 === Next Pseudonymous IMSI SMS is Lost
-=== SMS Arrives Late
+
+If the SMS with the next pseudonymous IMSI does not arrive, the SIM will start
+the next Location Updating Procedure with the old pseudonymous IMSI. Because
+the HLR has both the old and the new pseudonymous IMSI allocated at this point,
+the subscriber is not locked out of the network.
+
+An attacker might block the next pseudonymous IMSI SMS on purpose. Then the
+subscriber would have the same pseudonymous IMSI for a long time. A suitable
+defense is warning the subscriber if the IMSI does not change
+(<<warn-no-imsi-change>>).
+
+=== Next Pseudonymous IMSI SMS arrives out of order
+
+The next pseudonymous IMSI SMS may arrive out of order. Either, because the
+network is not able to deliver them in order, or even because an attacker would
+perform a replay attack.
+
+If the SMS arrives out of order, the imsi_pseudo_i counter will not be higher
+than the value the SIM applet (<<sim-app>>) has stored. Therefore, the applet
+will discard the message and the subscriber is not locked out of the network.
 
 // === SMS Arrives Before Timer Expires
 // FIXME: OS#4486
@@ -328,6 +349,7 @@ Padding at the end, should be filled with 1111 as in the TBCD specification.
 == Recommendations for Real-World Implementations
 === ATT = 0
 === End to End Encryption of SMS
+[[warn-no-imsi-change]]
 === Warning the User if the IMSI Does Not Change
 === User-configurable Minimum Duration Between IMSI Changes
 
