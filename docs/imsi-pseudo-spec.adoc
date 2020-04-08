@@ -118,6 +118,7 @@ msc {
 <<<
 == Required Changes
 
+[[hlr-imsi-pseudo-storage]]
 === Pseudonymous IMSI Storage in the HLR
 
 The HLR must store up to two pseudonymous IMSIs (imsi_pseudo) and their related
@@ -191,9 +192,9 @@ next SMS. Afterwards, the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section
 === Process Update_Location_HLR
 
 All IMSI Pseudonymization related changes to Process Update_Location_HLR
-(3GPP TS 29.002) are optional. All deviations from the existing specification
-that are outlined in this section are expected to be enabled or disabled
-entirely where IMSI pseudonymization is implemented.
+(3GPP TS 29.002) are optional. Deviations from the existing specification that
+are outlined in this section are expected to be enabled or disabled entirely
+where IMSI pseudonymization is implemented.
 
 [[figure-imsi-pseudo]]
 .Process Update_Location_HLR with IMSI pseudonymization changes
@@ -206,30 +207,31 @@ msc {
   MSC   => HLR  [label="Update Location Request"];
 
   --- [label="If new pseudonymous IMSI was used: deallocate and cancel old pseudonymous IMSI"];
-  HLR box  HLR  [label="Deallocate old pseudonymous IMSI"];
+  HLR  box HLR  [label="Deallocate old pseudonymous IMSI"];
   MSC  <=  HLR  [label="Cancel Location Request"];
   MSC   => HLR  [label="Cancel Location Result"];
   ---;
 
   MSC  <=  HLR  [label="Insert Subscriber Data Request"];
   MSC   => HLR  [label="Insert Subscriber Data Result"];
-  HLR box  HLR  [label="Start Next_Pseudo_IMSI_Timer"];
+  HLR  box HLR  [label="Start Next_Pseudo_IMSI_Timer"];
   MSC  <=  HLR  [label="Update Location Result"];
-  MSC box  MSC  [label="Finish Location Updating with ME"],
+  MSC  box MSC  [label="Finish Location Updating with ME"],
 
-  HLR box  HLR  [label="Wait for Next_Pseudo_IMSI_Timer expiry"];
+  HLR  box HLR  [label="Wait for Next_Pseudo_IMSI_Timer expiry"];
   |||;
   ...;
   |||;
-  HLR box  HLR  [label="Next_Pseudo_IMSI_Timer expired"];
+  HLR  box HLR  [label="Next_Pseudo_IMSI_Timer expired"];
 
-  HLR box  HLR  [label="\nAllocate new pseudonymous IMSI\nif subscriber only has one allocated\n"];
+  HLR  box HLR  [label="\nAllocate new pseudonymous IMSI\nif subscriber has only one allocated\n"];
   SMSC <=  HLR  [label="Next Pseudonymous IMSI SMS"];
   SMSC box SMSC [label="Deliver SMS to ME"];
 }
 ----
 
 ==== Update Location Request
+
 When Update Location Request arrives, the HLR does not look up the subscriber
 by the IMSI, but by the pseudonymous IMSI instead. Unless the subscriber has
 two pseudonymous IMSI allocated and used the old pseudonymous IMSI in the
@@ -258,15 +260,25 @@ with the new pseudonymous IMSI arrives with a delay.
 
 ==== Insert Subscriber Data Result
 
-ISD works like before, then set Next_Pseudo_IMSI_Timer
+When Insert Subscriber Data Result arrives, a subscriber specific
+Next_Pseudo_IMSI_Timer starts.
 
 ==== Next_Pseudo_IMSI_Timer Expires
 
-* if subscriber has only one pseudo IMSI:
-  * abort if not enough IMSIs available
-  * generate new pseudo IMSI as described earlier
-  * set imsi_pseudo_i like last one + 1
-* send SMS to subscriber's SIM with newer pseudo IMSI
+If the subscriber has only one pseudonymous IMSI allocated, and the amount of
+available IMSIs in the HLR is high enough, a second pseudonymous IMSI and
+related imsi_pseudo_i gets allocated for the subscriber (as described in
+<<hlr-imsi-pseudo-storage>>).
+
+If the subscriber still has only one pseudonymous IMSI, because not enough
+IMSIs were available in the HLR, the process is aborted here and no SMS with
+a next pseudonymous IMSI is sent to the subscriber. The subscriber will get a
+new pseudonymous IMSI during the next Location Updating Procedure, if the HLR
+has enough IMSIs available at that point.
+
+An SMS is sent to the SMS - Service Centre (SMS-SC) with the newer pseudonymous
+IMSI (higher imsi_pseudo_i, see <<hlr-imsi-pseudo-i>>) and related
+imsi_pseudo_i value.
 
 [[sms-format]]
 ==== SMS Format
