@@ -359,7 +359,18 @@ and related branches for IMSI pseudonymization can be found at the above URL as
 well.
 
 == Recommendations for Real-World Implementations
-=== ATT = 0
+=== BCCH SI3: ATT = 0
+When changing from one pseudonymous IMSI to the next, it is important that the
+ME does not detach from the network. Otherwise it would be trivial for an
+attacker to correlate the detach with the attach of the same ME with the next
+pseudonymous IMSI.
+
+This is controlled with the ATT flag in the SYSTEM INFORMATION TYPE 3 (SI3)
+message on the Broadcast Control Channel (BCCH), see 3GPP TS 44.018 Section
+10.5.2.11. It must be set to 0.
+
+// FIXME: verify how it set with operators in germany (OS#4404)
+
 === End to End Encryption of SMS
 [[warn-no-imsi-change]]
 === Warning the User if the IMSI Does Not Change
