@@ -174,9 +174,9 @@ the next pseudonymous IMSI arrives from the HLR. A reference implementation is
 provided in <<reference-src>>.
 
 The SIM applet registers to a suitable SMS trigger (3GPP TS 03.19, Section
-6.2). When an SMS from the HLR in the format of <<sms-format>> arrives, the
-applet must verify that the SMS is not outdated by comparing imsi_pseudo_i from
-the SMS with the last imsi_pseudo_i that was used when changing the IMSI
+6.2). When an SMS from the HLR in the structure of <<sms-structure>> arrives,
+the applet must verify that the SMS is not outdated by comparing imsi_pseudo_i
+from the SMS with the last imsi_pseudo_i that was used when changing the IMSI
 (initially 1 as in <<hlr-imsi-pseudo-i>>). The new value must be higher,
 otherwise the SMS should not be processed further.
 
@@ -280,12 +280,40 @@ An SMS is sent to the SMS - Service Centre (SMS-SC) with the newer pseudonymous
 IMSI (higher imsi_pseudo_i, see <<hlr-imsi-pseudo-i>>) and related
 imsi_pseudo_i value.
 
-[[sms-format]]
-==== SMS Format
+[[sms-structure]]
+==== Next Pseudonymous IMSI SMS Structure
 
-* min_sleep_time
-* imsi_pseudo
-* imsi_pseudo_i
+// FIXME
+IMPORTANT: This is a draft. The structure is likely to change after the
+reference implementation phase.
+
+.Next pseudonymous IMSI SMS structure
+[packetdiag]
+----
+{
+	colwidth = 32
+
+	0-31:	 IMSI_PSEUDO_I
+	32-63:   MIN_SLEEP_TIME
+	64-119:  IMSI_PSEUDO
+	120-127: PAD
+}
+----
+
+IMSI_PSEUDO_I: 32 bits::
+See <<hlr-imsi-pseudo-i>>.
+
+MIN_SLEEP_TIME: 32 bits::
+Amount of seconds, which the SIM applet should wait before changing to the new
+pseudonymous IMSI. Since it is unclear when the SMS will arrive (ME might be
+turned off), this is a minimum amount.
+
+IMSI_PSEUDO: 60 bits::
+Telephony Binary Coded Decimal (TBCD, 3GPP TS 29.002) version of the next
+pseudonymous IMSI.
+
+PAD: 8 bits::
+Padding at the end, should be filled with 1111 as in the TBCD specification.
 
 == Error Scenarios
 === Next Pseudonymous IMSI SMS is Lost
