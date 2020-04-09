@@ -325,10 +325,6 @@ imsi_pseudo_i value.
 [[sms-structure]]
 ==== Next Pseudonymous IMSI SMS Structure
 
-// FIXME
-IMPORTANT: This is a draft. The structure is likely to change after the
-reference implementation phase.
-
 .Next pseudonymous IMSI SMS structure
 [packetdiag]
 ----
@@ -341,6 +337,10 @@ reference implementation phase.
 	120-127: PAD
 }
 ----
+
+// FIXME
+IMPORTANT: This is a draft. The structure is likely to change after the
+reference implementation phase.
 
 IMSI_PSEUDO_I: 32 bits::
 See <<hlr-imsi-pseudo-i>>.
@@ -421,6 +421,22 @@ end encryption from the HLR to the SIM. It was considered for this
 specification, but found to be out of scope.
 
 === User-configurable Minimum Duration Between IMSI Changes
+
+It may be desirable to let subscribers configure their minimum duration between
+IMSI changes. This allows subscribers with a high privacy requirement to switch
+their pseudonymous IMSI more often, and it allows the pseudonymous IMSI change
+to happen less frequently if it is distracting to the subscriber.
+
+How distracting the pseudonymous IMSI change is, depends on the ME. The
+following examples were observed:
+
+// FIXME: might need an update after SYS#4481
+
+* A Samsung GT-I9100 Galaxy SII smartphone with Android 4.0.3 displays a
+  message at the bottom of the screen for about 5 seconds, but the user
+  interface remains usable.
+* A Samsung GT-E1200 feature phone displays a waiting screen for 16 to 17
+  seconds and is unusable during that time.
 
 <<<
 include::./common/chapters/gfdl.adoc[]
