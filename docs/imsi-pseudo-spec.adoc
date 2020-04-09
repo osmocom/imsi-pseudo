@@ -130,6 +130,7 @@ registered with the HLR. If the amount of available IMSIs is too short, the HLR
 can delay assigning new pseudonymous IMSIs until new IMSIs are available again.
 
 .Examples for additional subscriber data in HLR
+[options="header"]
 |===
 | Subscriber ID | imsi_pseudo | imsi_pseudo_i
 // example IMSIs taken from Wikipedia
@@ -174,6 +175,30 @@ The SIM is provisioned with a SIM applet, which is able to change the IMSI once
 the next pseudonymous IMSI arrives from the HLR. A reference implementation is
 provided in <<reference-src>>.
 
+===== Counter Storage
+
+The following counter variables are stored in the SIM applet.
+
+[options="header",cols="20%,12%,68%"]
+|===
+| Name | Initial value | Description
+
+| imsi_pseudo_i
+| 1
+| See <<hlr-imsi-pseudo-i>>.
+
+| imsi_pseudo_lu
+| 0
+| Amount of Location Updating procedures done with the same pseudonymous IMSI.
+
+| imsi_pseudo_lu_max
+| (decided by operator)
+| Maximum amount of Location Updating procedures done with the same
+  pseudonymous IMSI, before the SIM applet shows a warning to the subscriber.
+|===
+
+===== Switch to Next Pseudonymous IMSI
+
 The SIM applet registers to a suitable SMS trigger (3GPP TS 03.19, Section
 6.2). When an SMS from the HLR in the structure of <<sms-structure>> arrives,
 the applet must verify that the SMS is not outdated by comparing imsi_pseudo_i
@@ -184,12 +209,27 @@ otherwise the SMS should not be processed further.
 The SIM applet registers a timer with min_sleep_time from the SMS. When the
 timer triggers, the IMSI of the SIM is overwritten with the new pseudonymous
 IMSI, the TMSI and GSM Ciphering key Kc (3GPP TS 31.102, Section 4.4.3.1) are
-invalidated. The current imsi_pseudo_i value is stored to compare it with the
-next SMS. Afterwards, the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section
-6.4.7.1 is executed to apply the new IMSI.
+invalidated. The current imsi_pseudo_i from the SMS is stored in the SIM applet
+to compare it with the next SMS. imsi_pseudo_lu is reset to 0. Afterwards,
+the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section 6.4.7.1 is executed
+to apply the new IMSI.
 
 // FIXME: do we need to enforce the LU now, with an arbitrary CM Service
 // Request, or would this only be necessary for Osmocom? (OS#4404)
+
+===== Warning the Subscriber If the Pseudonymous IMSI Does Not Change
+
+An attacker could potentially block the next pseudonymous IMSI SMS on purpose.
+Because the SIM applet cannot decide the next pseudonymous IMSI, it would have
+the same pseudonymous IMSI for a long time. Then it could become feasible for
+an attacker to track the subscriber by their pseudonymous IMSI. Therefore the
+SIM applet should warn the subscriber if the pseudonymous IMSI does not change.
+
+The SIM applet registers to EVENT_EVENT_DOWNLOAD_LOCATION_STATUS (3GPP TS
+03.19, Section 6.2) and increases imsi_pseudo_lu by 1 when the event is
+triggered. If imsi_pseudo_lu reaches imsi_pseudo_lu_max, the SIM applet
+displays a warning to the subscriber.
+
 [[process-update-location-hlr]]
 === Process Update_Location_HLR
 
@@ -236,9 +276,9 @@ msc {
 
 When Update Location Request arrives, the HLR does not look up the subscriber
 by the IMSI, but by the pseudonymous IMSI instead. Unless the subscriber has
-two pseudonymous IMSI allocated and used the old pseudonymous IMSI in the
-Update Location Request, this is followed by the existing logic to continue with
-Insert Subscriber Data Request.
+two pseudonymous IMSI allocated and used the new pseudonymous IMSI in the
+Update Location Request, this is followed by the existing logic to continue
+with Insert Subscriber Data Request.
 
 ===== Update Location Request With New Pseudonymous IMSI
 
@@ -326,11 +366,6 @@ the next Location Updating Procedure with the old pseudonymous IMSI. Because
 the HLR has both the old and the new pseudonymous IMSI allocated at this point,
 the subscriber is not locked out of the network.
 
-An attacker might block the next pseudonymous IMSI SMS on purpose. Then the
-subscriber would have the same pseudonymous IMSI for a long time. A suitable
-defense is warning the subscriber if the IMSI does not change
-(<<warn-no-imsi-change>>).
-
 === Next Pseudonymous IMSI SMS arrives out of order
 
 The next pseudonymous IMSI SMS may arrive out of order. Either, because the
@@ -385,8 +420,6 @@ The safest way to protect the next pseudonymous IMSI SMS is a layer of end to
 end encryption from the HLR to the SIM. It was considered for this
 specification, but found to be out of scope.
 
-[[warn-no-imsi-change]]
-=== Warning the User if the IMSI Does Not Change
 === User-configurable Minimum Duration Between IMSI Changes
 
 <<<
