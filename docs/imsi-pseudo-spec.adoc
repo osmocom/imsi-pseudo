@@ -198,7 +198,7 @@ The following counter variables are stored in the SIM applet.
 
 ===== Switch to Next Pseudonymous IMSI
 
-The SIM applet registers to a suitable SMS trigger (3GPP TS 03.19, Section
+The SIM applet registers to a suitable SMS trigger (3GPP TS 43.019, Section
 6.2). When an SMS from the HLR in the structure of <<sms-structure>> arrives,
 the applet must verify that the SMS is not outdated by comparing imsi_pseudo_i
 from the SMS with the last imsi_pseudo_i that was used when changing the IMSI
