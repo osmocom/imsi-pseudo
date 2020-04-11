@@ -1,4 +1,4 @@
-= Specification for IMSI Pseudonymization on the Radio Interface for 2G and Above
+= Specification for IMSI Pseudonymization on the Radio Interface for 2G/3G/4G
 
 == Introduction
 
@@ -15,7 +15,7 @@ send the IMSI less often, by using the Temporary Mobile Subscriber Identity
 
 But this is not enough. So-called IMSI catchers were invented and are used to
 not only record IMSIs when they have to be sent. But also to force ME to send
-their IMSI by immitating a Base Transceiver Station (BTS). IMSI catchers have
+their IMSI by imitating a Base Transceiver Station (BTS). IMSI catchers have
 become small and affordable, even criminals actors without much budget can use
 them to track anybody with a mobile phone.
 
@@ -156,7 +156,7 @@ as pseudonymous IMSI yet, but may be the real IMSI of a subscriber.
 [[hlr-imsi-pseudo-i]]
 ==== imsi_pseudo_i
 
-The counter imsi_pseudo_i indicates how often a subscriber's pseudonymous IMSI
+The counter imsi_pseudo_i indicates how often a subscribers pseudonymous IMSI
 was changed. The value is 1 for the first allocated pseudonymous IMSI of a
 subscriber. When allocating a new pseudonymous IMSI for the same subscriber,
 the new imsi_pseudo_i value is increased by 1. The counter is used by the SIM
