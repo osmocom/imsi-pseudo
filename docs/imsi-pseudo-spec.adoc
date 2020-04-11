@@ -402,8 +402,10 @@ pseudonymous IMSI in the SMS was changed, the SIM would be locked out of the
 network.
 
 The safest way to protect the next pseudonymous IMSI SMS is a layer of end to
-end encryption from the HLR to the SIM. It was considered for this
-specification, but found to be out of scope.
+end encryption from the HLR to the SIM.  The existing means for OTA SMS security
+(3GPP TS 23.048) provide mechanisms for integrity protection, confidentiality
+as well as replay protection and must be implemented when using IMSI
+pseudonymization.
 
 === User-configurable Minimum Duration Between IMSI Changes
 
