@@ -7,8 +7,8 @@
 A long-standing issue in the 3GPP specifications is, that mobile phones and
 other mobile equipment (ME) have to send the International Mobile Subscriber
 Identity (IMSI) unencrypted over the air. Each IMSI is a unique identifier for
-the subscriber Therefore most people can be uniquely identified by recording the
-IMSI that their ME is sending.  The 3GPP specifications provide means for
+the subscriber. Therefore most people can be uniquely identified by recording
+the IMSI that their ME is sending.  The 3GPP specifications provide means for
 implementations to send the IMSI less often by using the Temporary Mobile
 Subscriber Identity (TMSI) where possible.
 
@@ -365,7 +365,7 @@ the next Location Updating Procedure with the old pseudonymous IMSI. Because
 the HLR has both the old and the new pseudonymous IMSI allocated at this point,
 the subscriber is not locked out of the network.
 
-=== Next Pseudonymous IMSI SMS arrives out of order
+=== Next Pseudonymous IMSI SMS Arrives Out of Order
 
 The next pseudonymous IMSI SMS may arrive out of order. Either, because the
 network is not able to deliver them in order, or even because an attacker would
@@ -402,10 +402,10 @@ pseudonymous IMSI in the SMS was changed, the SIM would be locked out of the
 network.
 
 The safest way to protect the next pseudonymous IMSI SMS is a layer of end to
-end encryption from the HLR to the SIM.  The existing means for OTA SMS security
-(3GPP TS 23.048) provide mechanisms for integrity protection, confidentiality
-as well as replay protection and must be implemented when using IMSI
-pseudonymization.
+end encryption from the HLR to the SIM.  The existing means for OTA SMS
+security (3GPP TS 23.048) provide mechanisms for integrity protection,
+confidentiality as well as replay protection and must be implemented when using
+IMSI pseudonymization.
 
 === User-configurable Minimum Duration Between IMSI Changes
 
