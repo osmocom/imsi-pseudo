@@ -213,9 +213,10 @@ from the SMS with the last imsi_pseudo_i that was used when changing the IMSI
 otherwise the SMS should not be processed further.
 
 The SIM applet registers a timer with min_sleep_time from the SMS. When the
-timer triggers, the IMSI of the SIM is overwritten with the new pseudonymous
-IMSI, the TMSI and GSM Ciphering key Kc (3GPP TS 31.102, Section 4.4.3.1) are
-invalidated. The current imsi_pseudo_i from the SMS is stored in the SIM applet
+timer triggers, EF~IMSI~ of the SIM is overwritten with the new pseudonymous
+IMSI. The TMSI and related data (EF~LOCI~, EF~PSLOCI~) and ciphering keys
+(EF~Kc~, EF~KcGPRS~, EF~Keys~, EF~KeysPS~) are invalidated (see 3GPP TS
+31.102). The current imsi_pseudo_i from the SMS is stored in the SIM applet
 to compare it with the next SMS. imsi_pseudo_lu is reset to 0. Afterwards,
 the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section 6.4.7.1 is executed
 to apply the new IMSI.

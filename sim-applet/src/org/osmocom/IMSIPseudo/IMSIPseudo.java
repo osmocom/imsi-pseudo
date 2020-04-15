@@ -214,6 +214,7 @@ public class IMSIPseudo extends Applet implements ToolkitInterface, ToolkitConst
 			invalidateTMSI((short)SIMView.FID_EF_LOCIGPRS);
 			invalidateKc((short)SIMView.FID_EF_KC);
 			invalidateKc((short)SIMView.FID_EF_KCGPRS);
+			/* FIXME: also invalidate EF_KEYS, EF_KEYS_PS */
 			refreshIMSI();
 		} catch (Exception e) {
 			showError((short)42);
