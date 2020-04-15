@@ -444,6 +444,3 @@ The HLR modifications described in <<hlr-imsi-pseudo-storage>> and
 the Osmocom project, licensed under AGPL-3.0. Information about the source code
 and related branches for IMSI pseudonymization can be found at the above URL as
 well.
-
-<<<
-include::./common/chapters/gfdl.adoc[]
