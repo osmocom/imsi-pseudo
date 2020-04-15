@@ -31,8 +31,8 @@ the ME to a new pseudonymous IMSI allocated by the Home Location Register (HLR)
 or Home Subscriber Service (HSS). The next pseudonymous IMSI is sent to the SIM
 via Short Message Service (SMS), then a SIM applet overwrites the IMSI of the
 SIM with the new value. The only component that needs to be changed in the
-network besides the SIM is the HLR/HSS, therefore it should be possible even
-for a Mobile Virtual Network Operator (MVNO) to deploy this privacy
+network besides the SIM/USIM is the HLR/HSS, therefore it should be possible
+even for a Mobile Virtual Network Operator (MVNO) to deploy this privacy
 enhancement.
 
 === Summary of Existing Location Updating Procedures in RAN and CN
@@ -170,6 +170,7 @@ pseudonymous IMSI.
 
 === SIM Provisioning
 
+IMSI pseudonymization as specified by this document works with SIM and USIM.
 The HLR is allocating a pseudonymous IMSI for the subscriber. This pseudonymous
 IMSI is stored as IMSI on the subscriber's SIM instead of the real IMSI.
 
