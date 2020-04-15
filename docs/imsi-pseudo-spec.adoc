@@ -18,6 +18,12 @@ their IMSI by imitating a Base Transceiver Station (BTS). IMSI catchers have
 become small and affordable, even criminals actors without much budget can use
 them to track anybody with a mobile phone.
 
+5G addresses this problem with the Subscriber Concealed Identifier (SUCI),
+which uses public-key cryptography to ensure that the permanent subscriber
+identity can only be read by the home network (3GPP TS 33.501, Section 6.12.2).
+A comparable, but different approach to conceal the IMSI for 2G, 3G and 4G is
+provided in this specification.
+
 === Summary of Proposed Solution
 
 The solution presented in this document is to periodically change the IMSI of
