@@ -70,6 +70,7 @@ of a Mobile Virtual Network Operator (MVNO), this mechanism can be
 deployed by a MVNO without any changes to the operators of the physical
 infrastructure (MNO).
 
+<<<
 === Summary of Existing Location Updating Procedures in RAN and CN
 
 Every subscriber's SIM/USIM is provisioned with the IMSI and secret
@@ -223,6 +224,7 @@ the new `imsi_pseudo_i` value is increased by 1. The counter is used by the SIM/
 applet to detect and ignore outdated requests related to changing the
 pseudonymous IMSI.
 
+<<<
 === SIM/USIM Provisioning
 
 IMSI pseudonymization as specified by this document works with
@@ -305,6 +307,7 @@ The SIM applet registers to EVENT_EVENT_DOWNLOAD_LOCATION_STATUS (3GPP TS
 triggered. If `imsi_pseudo_lu` reaches `imsi_pseudo_lu_max`, the SIM applet
 displays a warning to the subscriber.
 
+<<<
 [[process-update-location-hlr]]
 === Process Update_Location_HLR
 
@@ -432,6 +435,7 @@ pseudonymous IMSI.
 PAD: 8 bits::
 Padding at the end, should be filled with 1111 as in the TBCD specification.
 
+<<<
 == Error Scenarios
 
 === Next Pseudonymous IMSI SMS is Lost
@@ -454,6 +458,7 @@ will discard the message and the subscriber is not locked out of the network.
 // === SMS Arrives Before Timer Expires
 // FIXME: OS#4486
 
+<<<
 == Recommendations for Real-World Implementations
 
 === BCCH SI3: ATT = 0
@@ -501,6 +506,7 @@ following examples were observed:
 * A Samsung GT-E1200 feature phone displays a waiting screen for 16 to 17
   seconds and is unusable during that time.
 
+<<<
 [[reference-src]]
 == Reference Implementation with Source Code
 
