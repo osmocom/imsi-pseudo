@@ -105,7 +105,7 @@ However, the allocation of the TMSI is optional (the network may choose
 to not perform it), and particularly at mobility changes across the
 MSC/VLR boundary, or even across the PLMN boundary, the TMSI allocated
 by the previouis network element may not be known, and an IMSI based
-Location Updating procedure used.
+Location Updating procedure is used.
 
 Furthermore, at any given point in time, a legitimate network or a rogue
 base station can inquire the IMSI from the ME using the "MM IDENTITY
@@ -226,7 +226,7 @@ pseudonymous IMSI.
 === SIM/USIM Provisioning
 
 IMSI pseudonymization as specified by this document works with
-traditional SIM (used i 2G), as well as with USIM (used from 3G
+traditional SIM (used in 2G), as well as with USIM (used from 3G
 onwards).
 
 The initial IMSI provisioned in the SIM/USIM is provisioned as the initial
@@ -280,7 +280,7 @@ from the SMS with the last `imsi_pseudo_i` that was used when changing the IMSI
 (initially 1 as in <<hlr-imsi-pseudo-i>>). The new value must be higher,
 otherwise the SMS should not be processed further.
 
-The SIM applet registers a timer with min_sleep_time from the SMS. When the
+The SIM applet registers a timer with `min_sleep_time` from the SMS. When the
 timer triggers, EF~IMSI~ of the SIM/USIM is overwritten with the new pseudonymous
 IMSI. The TMSI and related data (EF~LOCI~, EF~PSLOCI~) and ciphering keys
 (EF~Kc~, EF~KcGPRS~, EF~Keys~, EF~KeysPS~) are invalidated (see 3GPP TS
