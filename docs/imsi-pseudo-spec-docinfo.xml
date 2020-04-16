@@ -21,6 +21,17 @@
       <jobtitle>Employee</jobtitle>
     </affiliation>
   </author>
+  <author>
+    <firstname>Neels</firstname>
+    <surname>Hofmeyr</surname>
+    <email>nhofmeyr@sysmocom.de</email>
+    <authorinitials>NH</authorinitials>
+    <affiliation>
+      <shortaffil>sysmocom</shortaffil>
+      <orgname>sysmocom - s.f.m.c. GmbH</orgname>
+      <jobtitle>Employee</jobtitle>
+    </affiliation>
+  </author>
 </authorgroup>
 
 <copyright>
