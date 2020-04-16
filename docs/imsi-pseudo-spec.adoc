@@ -64,7 +64,6 @@ to their specification or implementation.
 
 Constraining the required changes to only two elements in the network
 enables quick adoption potential for the proposed mechanism.
-
 Furthermore, as SIM/USIM and HLR/HSS are the only two elements under control
 of a Mobile Virtual Network Operator (MVNO), this mechanism can be
 deployed by a MVNO without any changes to the operators of the physical
