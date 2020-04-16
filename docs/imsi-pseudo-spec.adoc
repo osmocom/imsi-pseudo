@@ -4,64 +4,112 @@
 
 === Protecting the IMSI on the Radio Interface is Desirable
 
-A long-standing issue in the 3GPP specifications is, that mobile phones and
+A long-standing issue in the 3GPP specifications for cellular mobile
+communications starting from 2G (GSM) is, that mobile phones and
 other mobile equipment (ME) have to send the International Mobile Subscriber
-Identity (IMSI) unencrypted over the air. Each IMSI is a unique identifier for
-the subscriber. Therefore most people can be uniquely identified by recording
-the IMSI that their ME is sending.  The 3GPP specifications provide means for
-implementations to send the IMSI less often by using the Temporary Mobile
-Subscriber Identity (TMSI) where possible.
+Identity (IMSI) unencrypted over the air.  Each IMSI is a unique identifier for
+the subscriber. Therefore, most people can be uniquely identified by recording
+the IMSI that their ME is sending.
 
-But this is not enough. So-called IMSI catchers were invented and are used to
-not only record IMSIs when they have to be sent. But also to force ME to send
-their IMSI by imitating a Base Transceiver Station (BTS). IMSI catchers have
-become small and affordable, even criminals actors without much budget can use
-them to track anybody with a mobile phone.
+The 3GPP specifications provide means for implementations to send the
+IMSI less often by using the Temporary Mobile Subscriber Identity (TMSI)
+where possible.  However, the decision on when to use IMSI or TMSI is
+entirely on the networks side, without any control by the ME or even the
+subscriber.
+
+This leads to a variety of attacks on subscriber location privacy, including
+the use of passive air-interface sniffing as well as false base station
+attacks, where an attacker impersonates a base station which
+subsequently inquires every ME about its IMSI.
+
+Some related devices have been termed _IMSI catchers_ or _Stingray_ in
+both scientific literature as well as mainstream media. IMSI catchers have
+become small and affordable during the last decade; criminals actors
+and in some cases even tabloid journalists without much budget have
+reportedly used them to track anybody with a mobile phone.
 
 5G addresses this problem with the Subscriber Concealed Identifier (SUCI),
 which uses public-key cryptography to ensure that the permanent subscriber
-identity can only be read by the home network (3GPP TS 33.501, Section 6.12.2).
-A comparable, but different approach to conceal the IMSI for 2G, 3G and 4G is
-provided in this specification.
+identity (IMSI) is not transmitted over the air interface anymore.
+Rather, a concealed version of it is transmitted (3GPP TS 33.501,
+Section 6.12.2).  The 5G SUCI mechanism can not be used 1:1 for previous
+generations of cellular networks as it relies on extending the
+subscriber identity from the small, 15-decimal-digit IMSI to a much
+larger SUPI (Subscriber Permanent Identifier) only available in 5G.
+
+No mechanism for increasing subscriber identity and location privacy on
+the radio interface has been specified for the previous cellular
+technologies 2G (GSM), 3G (UMTS) and 4G (LTE).  Meanwhile, pure 5G
+networks are and will remain rare for many years to come, as operators
+have to support billions of deployed legacy pre-5G ME.  Operating
+combined 5G + previous technology networks enables the so-called
+"downgrade attacks" where the attacker blocks access to 5G e.g. by means
+of jamming/interference, and hence triggers the ME to use a previous
+generation which is still susceptible to the attacks.
+
+This specification proposes a different approach to conceal the
+IMSI for legacy 2G, 3G and 4G networks.
 
 === Summary of Proposed Solution
 
 The solution presented in this document is to periodically change the IMSI of
 the ME to a new pseudonymous IMSI allocated by the Home Location Register (HLR)
-or Home Subscriber Service (HSS). The next pseudonymous IMSI is sent to the SIM
+or Home Subscriber Service (HSS). The next pseudonymous IMSI is sent to the SIM/USIM
 via Short Message Service (SMS), then a SIM applet overwrites the IMSI of the
-SIM with the new value. The only component that needs to be changed in the
-network besides the SIM/USIM is the HLR/HSS, therefore it should be possible
-even for a Mobile Virtual Network Operator (MVNO) to deploy this privacy
-enhancement.
+SIM/USIM with the new value. The only components in the network that need to be
+changed in order to support this mechanism are the SIM/USIM and the
+HLR/HSS.  All other elements (like BTS, NodeB, eNodeB, BSC, RNC, MME,
+MSC/VLR, SGSN, GGSN, S-GW, P-GW, ...) remain as-is, without any changes
+to their specification or implementation.
+
+Constraining the required changes to only two elements in the network
+enables quick adoption potential for the proposed mechanism.
+
+Furthermore, as SIM/USIM and HLR/HSS are the only two elements under control
+of a Mobile Virtual Network Operator (MVNO), this mechanism can be
+deployed by a MVNO without any changes to the operators of the physical
+infrastructure (MNO).
 
 === Summary of Existing Location Updating Procedures in RAN and CN
 
-The subscriber's SIM is provisioned with the IMSI and cryptographic keys of a
-subscriber, after the subscriber was added with the same data to the HLR/HSS.
-In the Remote Access Network (RAN), the IMSI is sent over the air interface and
-then transmitted to the Core Network (CN), where it is validated by the
-HLR/HSS. The involved components vary by the generation of the network and
-whether the SIM is attempting a Circuit Switched (CS) or Packet Switched (PS)
-connection, but the principle is the same. This document uses 2G CS Location
-Updating for reference, as in <<figure-imsi-regular>>.
+Every subscriber's SIM/USIM is provisioned with the IMSI and secret
+cryptographic keys (Ki or K+OP[c]).  The same IMSI and key data is also provisioned
+into the HLR/HSS, the central subscriber database of a cellular network.
+
+In a number of different situations, the IMSI is sent over the air
+interface and back-haul towards the Core Network (CN), where it is
+validated by the HLR/HSS. The involved components vary by the generation
+of the network and whether the SIM/USIM is attempting a Circuit Switched (CS)
+or Packet Switched (PS) connection, but the principle is the same. This
+document uses 2G CS Location Updating for reference, as in
+<<figure-imsi-regular>>.
 
 The IMSI is transmitted in the Location Updating Request from ME. The VLR
-needs an authentication challenge specific to the secret keys on the SIM to
-authenticate the SIM, and looks the authentication challenges up by the IMSI.
+needs an authentication challenge specific to the secret keys on the SIM/USIM to
+authenticate the SIM/USIM, and looks the authentication challenges up by the IMSI.
 If the VLR does not have any more authentication challenges for the IMSI (as it
 happens when the VLR sees the IMSI for the first time), the VLR requests new
-authentication challenges from the HLR. Then the HLR verifies that the IMSI is
+authentication challenges from the HLR/HSS. Then the HLR/HSS verifies that the IMSI is
 known and, if it is unknown, sends back an error that will terminate the
 Location Updating procedure.
 
-After the VLR found the authentication challenge, it authenticates the SIM, and
+After the VLR found the authentication challenge, it authenticates the SIM/USIM, and
 performs a Classmark Enquiry and Physical Channel Reconfiguration. Then the VLR
 has the required information to finish the Location Updating, and continues
 with Process Update_Location_HLR (3GPP TS 29.002). Afterwards, the VLR assigns
 a new TMSI with the Location Updating Accept, which is acknowledged by the TMSI
 Reallocation Complete. In following Location Updates with the same MSC, the ME
 sends the TMSI instead of the IMSI in the Location Updating Request.
+
+However, the allocation of the TMSI is optional (the network may choose
+to not perform it), and particularly at mobility changes across the
+MSC/VLR boundary, or even across the PLMN boundary, the TMSI allocated
+by the previouis network element may not be known, and an IMSI based
+Location Updating procedure used.
+
+Furthermore, at any given point in time, a legitimate network or a rogue
+base station can inquire the IMSI from the ME using the "MM IDENTITY
+REQUEST (IMSI)" command.
 
 [[figure-imsi-regular]]
 .Location Updating in 2G CS with IMSI
@@ -123,16 +171,22 @@ msc {
 <<<
 == Required Changes
 
-[[hlr-imsi-pseudo-storage]]
-=== Pseudonymous IMSI Storage in the HLR
+This section covers the changes / enhancements required
+compared to the existing 3GPP specifications.
 
-The HLR must store up to two pseudonymous IMSIs (imsi_pseudo) and their related
-counters (imsi_pseudo_i) per subscriber. Each subscriber initially has one
-pseudonymous IMSI allocated. A subscriber has two valid pseudonymous IMSIs
-only during the transition phase from the old pseudonymous IMSI to the new one.
-The amount of available IMSIs must be higher than the amount of subscribers
-registered with the HLR. If the amount of available IMSIs is too short, the HLR
-can delay assigning new pseudonymous IMSIs until new IMSIs are available again.
+[[hlr-imsi-pseudo-storage]]
+=== Pseudonymous IMSI Storage in the HLR/HSS
+
+The HLR/HSS must store up to two pseudonymous IMSIs (`imsi_pseudo`) and
+their related counters (`imsi_pseudo_i`) per subscriber. Each subscriber
+initially has one pseudonymous IMSI allocated. A subscriber has two
+valid pseudonymous IMSIs only during the transition phase from the old
+pseudonymous IMSI to the new one.
+
+Subsequently, the amount of available IMSIs must be higher than the
+amount of subscribers registered with the HLR/HSS. If the amount of
+available IMSIs is too small, the HLR/HSS could delay assigning new
+pseudonymous IMSIs until new IMSIs are available again.
 
 .Examples for additional subscriber data in HLR
 [options="header"]
@@ -154,32 +208,46 @@ can delay assigning new pseudonymous IMSIs until new IMSIs are available again.
 
 ==== imsi_pseudo
 
-The value for imsi_pseudo is a random choice from the pool of available IMSIs
-that the HLR controls. The pseudonymous IMSI must not be used by any subscriber
-as pseudonymous IMSI yet, but may be the real IMSI of a subscriber.
+The value for `imsi_pseudo` is a random choice from the pool of available
+IMSIs that the HLR/HSS controls. The pseudonymous IMSI must not be used
+by any subscriber as pseudonymous IMSI yet, but may be the real IMSI of
+a subscriber.
 
 [[hlr-imsi-pseudo-i]]
 ==== imsi_pseudo_i
 
-The counter imsi_pseudo_i indicates how often a subscribers pseudonymous IMSI
+The counter `imsi_pseudo_i` indicates how often a subscribers pseudonymous IMSI
 was changed. The value is 1 for the first allocated pseudonymous IMSI of a
 subscriber. When allocating a new pseudonymous IMSI for the same subscriber,
-the new imsi_pseudo_i value is increased by 1. The counter is used by the SIM
+the new `imsi_pseudo_i` value is increased by 1. The counter is used by the SIM/USIM
 applet to detect and ignore outdated requests related to changing the
 pseudonymous IMSI.
 
-=== SIM Provisioning
+=== SIM/USIM Provisioning
 
-IMSI pseudonymization as specified by this document works with SIM and USIM.
-The HLR is allocating a pseudonymous IMSI for the subscriber. This pseudonymous
-IMSI is stored as IMSI on the subscriber's SIM instead of the real IMSI.
+IMSI pseudonymization as specified by this document works with
+traditional SIM (used i 2G), as well as with USIM (used from 3G
+onwards).
+
+The initial IMSI provisioned in the SIM/USIM is provisioned as the initial
+pseudonymous IMSI in the HLR/HSS.
 
 [[sim-app]]
 ==== SIM applet
 
-The SIM is provisioned with a SIM applet, which is able to change the IMSI once
-the next pseudonymous IMSI arrives from the HLR. A reference implementation is
-provided in <<reference-src>>.
+SIM/USIM have long supported the installation and operation of
+additional applets on the card itself.  The programming language and
+runtime environment for such applets is an implementation detail.
+However, the industry has converged around JavaCards with related
+additional APIs specific to SIM, UICC and USIM.  Depending on the card
+profile / provisioning, it is possible for such applets to access the
+card file system and modify files on the card, such as the file storing
+the IMSI.
+
+A SIM/USIM compatible with this specification is provisioned with a SIM
+applet, which is able to change the IMSI once the next pseudonymous IMSI
+arrives from the HLR/HSS. A reference implementation is provided in
+<<reference-src>>.
 
 ===== Counter Storage
 
@@ -206,18 +274,18 @@ The following counter variables are stored in the SIM applet.
 ===== Switch to Next Pseudonymous IMSI
 
 The SIM applet registers to a suitable SMS trigger (3GPP TS 43.019, Section
-6.2). When an SMS from the HLR in the structure of <<sms-structure>> arrives,
-the applet must verify that the SMS is not outdated by comparing imsi_pseudo_i
-from the SMS with the last imsi_pseudo_i that was used when changing the IMSI
+6.2). When an SMS from the HLR/HSS in the structure of <<sms-structure>> arrives,
+the applet must verify that the SMS is not outdated by comparing `imsi_pseudo_i`
+from the SMS with the last `imsi_pseudo_i` that was used when changing the IMSI
 (initially 1 as in <<hlr-imsi-pseudo-i>>). The new value must be higher,
 otherwise the SMS should not be processed further.
 
 The SIM applet registers a timer with min_sleep_time from the SMS. When the
-timer triggers, EF~IMSI~ of the SIM is overwritten with the new pseudonymous
+timer triggers, EF~IMSI~ of the SIM/USIM is overwritten with the new pseudonymous
 IMSI. The TMSI and related data (EF~LOCI~, EF~PSLOCI~) and ciphering keys
 (EF~Kc~, EF~KcGPRS~, EF~Keys~, EF~KeysPS~) are invalidated (see 3GPP TS
-31.102). The current imsi_pseudo_i from the SMS is stored in the SIM applet
-to compare it with the next SMS. imsi_pseudo_lu is reset to 0. Afterwards,
+31.102). The current `imsi_pseudo_i` from the SMS is stored in the
+SIM applet to compare it with the next SMS. `imsi_pseudo_lu` is reset to 0. Afterwards,
 the EF~IMSI~ changing procedure in 3GPP TS 11.14, Section 6.4.7.1 is executed
 to apply the new IMSI.
 
@@ -233,8 +301,8 @@ an attacker to track the subscriber by their pseudonymous IMSI. Therefore the
 SIM applet should warn the subscriber if the pseudonymous IMSI does not change.
 
 The SIM applet registers to EVENT_EVENT_DOWNLOAD_LOCATION_STATUS (3GPP TS
-03.19, Section 6.2) and increases imsi_pseudo_lu by 1 when the event is
-triggered. If imsi_pseudo_lu reaches imsi_pseudo_lu_max, the SIM applet
+03.19, Section 6.2) and increases `imsi_pseudo_lu` by 1 when the event is
+triggered. If `imsi_pseudo_lu` reaches `imsi_pseudo_lu_max`, the SIM applet
 displays a warning to the subscriber.
 
 [[process-update-location-hlr]]
@@ -281,7 +349,7 @@ msc {
 
 ==== Update Location Request
 
-When Update Location Request arrives, the HLR does not look up the subscriber
+When Update Location Request arrives, the HLR/HSS does not look up the subscriber
 by the IMSI, but by the pseudonymous IMSI instead. Unless the subscriber has
 two pseudonymous IMSI allocated and used the new pseudonymous IMSI in the
 Update Location Request, this is followed by the existing logic to continue
@@ -290,8 +358,8 @@ with Insert Subscriber Data Request.
 ===== Update Location Request With New Pseudonymous IMSI
 
 If the subscriber has two pseudonymous IMSIs allocated, and the newer entry was
-used (higher imsi_pseudo_i, see <<hlr-imsi-pseudo-i>>), this section applies.
-The older pseudonymous IMSI is deallocated in the HLR. This is done as early
+used (higher `imsi_pseudo_i`, see <<hlr-imsi-pseudo-i>>), this section applies.
+The older pseudonymous IMSI is deallocated in the HLR/HSS. This is done as early
 as possible, so the timeframe where two pseudonymous IMSI are allocated for one
 subscriber is short.
 
@@ -303,7 +371,7 @@ to continue with Insert Subscriber Data Request.
 ===== Update Location Request With Old Pseudonymous IMSI
 
 If the subscriber has two pseudonymous IMSIs allocated, and the older entry was
-used (lower imsi_pseudo_i, see <<hlr-imsi-pseudo-i>>), the newer entry is _not_
+used (lower `imsi_pseudo_i`, see <<hlr-imsi-pseudo-i>>), the newer entry is _not_
 deallocated. This could lock out the subscriber from the network if the SMS
 with the new pseudonymous IMSI arrives with a delay.
 
@@ -315,19 +383,19 @@ Next_Pseudo_IMSI_Timer starts.
 ==== Next_Pseudo_IMSI_Timer Expires
 
 If the subscriber has only one pseudonymous IMSI allocated, and the amount of
-available IMSIs in the HLR is high enough, a second pseudonymous IMSI and
-related imsi_pseudo_i gets allocated for the subscriber (as described in
+available IMSIs in the HLR/HSS is high enough, a second pseudonymous IMSI and
+related `imsi_pseudo_i` gets allocated for the subscriber (as described in
 <<hlr-imsi-pseudo-storage>>).
 
 If the subscriber still has only one pseudonymous IMSI, because not enough
-IMSIs were available in the HLR, the process is aborted here and no SMS with
+IMSIs were available in the HLR/HSS, the process is aborted here and no SMS with
 a next pseudonymous IMSI is sent to the subscriber. The subscriber will get a
-new pseudonymous IMSI during the next Location Updating Procedure, if the HLR
-has enough IMSIs available at that point.
+new pseudonymous IMSI during the next Location Updating Procedure, if
+the HLR/HSS has enough IMSIs available at that point.
 
 An SMS is sent to the SMS - Service Centre (SMS-SC) with the newer pseudonymous
-IMSI (higher imsi_pseudo_i, see <<hlr-imsi-pseudo-i>>) and related
-imsi_pseudo_i value.
+IMSI (higher `imsi_pseudo_i`, see <<hlr-imsi-pseudo-i>>) and related
+`imsi_pseudo_i` value.
 
 [[sms-structure]]
 ==== Next Pseudonymous IMSI SMS Structure
@@ -368,9 +436,9 @@ Padding at the end, should be filled with 1111 as in the TBCD specification.
 
 === Next Pseudonymous IMSI SMS is Lost
 
-If the SMS with the next pseudonymous IMSI does not arrive, the SIM will start
+If the SMS with the next pseudonymous IMSI does not arrive, the SIM/USIM will start
 the next Location Updating Procedure with the old pseudonymous IMSI. Because
-the HLR has both the old and the new pseudonymous IMSI allocated at this point,
+the HLR/HSS has both the old and the new pseudonymous IMSI allocated at this point,
 the subscriber is not locked out of the network.
 
 === Next Pseudonymous IMSI SMS Arrives Out of Order
@@ -379,7 +447,7 @@ The next pseudonymous IMSI SMS may arrive out of order. Either, because the
 network is not able to deliver them in order, or even because an attacker would
 perform a replay attack.
 
-If the SMS arrives out of order, the imsi_pseudo_i counter will not be higher
+If the SMS arrives out of order, the `imsi_pseudo_i` counter will not be higher
 than the value the SIM applet (<<sim-app>>) has stored. Therefore, the applet
 will discard the message and the subscriber is not locked out of the network.
 
@@ -406,11 +474,11 @@ message on the Broadcast Control Channel (BCCH), see 3GPP TS 44.018 Section
 When deploying the IMSI pseudonymization, the operator should make sure that
 the next pseudonymous IMSI SMS (<<sms-structure>>) cannot be read or modified
 by third parties. Otherwise, the next pseudonymous IMSI is leaked, and if the
-pseudonymous IMSI in the SMS was changed, the SIM would be locked out of the
+pseudonymous IMSI in the SMS was changed, the SIM/USIM would be locked out of the
 network.
 
 The safest way to protect the next pseudonymous IMSI SMS is a layer of end to
-end encryption from the HLR to the SIM.  The existing means for OTA SMS
+end encryption from the HLR/HSS to the SIM/USIM.  The existing means for OTA SMS
 security (3GPP TS 23.048) provide mechanisms for integrity protection,
 confidentiality as well as replay protection and must be implemented when using
 IMSI pseudonymization.
@@ -441,7 +509,7 @@ source code under the Apache-2.0 license at:
 
 https://osmocom.org/projects/imsi-pseudo
 
-The HLR modifications described in <<hlr-imsi-pseudo-storage>> and
+The HLR/HSS modifications described in <<hlr-imsi-pseudo-storage>> and
 <<process-update-location-hlr>> were implemented for reference in OsmoHLR from
 the Osmocom project, licensed under AGPL-3.0. Information about the source code
 and related branches for IMSI pseudonymization can be found at the above URL as
