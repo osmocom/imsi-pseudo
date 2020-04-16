@@ -32,6 +32,17 @@
       <jobtitle>Employee</jobtitle>
     </affiliation>
   </author>
+  <author>
+    <firstname>Harald</firstname>
+    <surname>Welte</surname>
+    <email>hwelte@sysmocom.de</email>
+    <authorinitials>HW</authorinitials>
+    <affiliation>
+      <shortaffil>sysmocom</shortaffil>
+      <orgname>sysmocom - s.f.m.c. GmbH</orgname>
+      <jobtitle>Managing Director</jobtitle>
+    </affiliation>
+  </author>
 </authorgroup>
 
 <copyright>
