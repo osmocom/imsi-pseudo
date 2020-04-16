@@ -32,10 +32,12 @@ reportedly used them to track anybody with a mobile phone.
 which uses public-key cryptography to ensure that the permanent subscriber
 identity (IMSI) is not transmitted over the air interface anymore.
 Rather, a concealed version of it is transmitted (3GPP TS 33.501,
-Section 6.12.2).  The 5G SUCI mechanism can not be used 1:1 for previous
-generations of cellular networks as it relies on extending the
-subscriber identity from the small, 15-decimal-digit IMSI to a much
-larger SUPI (Subscriber Permanent Identifier) only available in 5G.
+Section 6.12.2).  The 5G SUCI mechanism can not be adapted easily for previous
+generations of cellular networks as it relies on introducing an entirely
+new mobile identity type of larger size (SUCI) than any of the existing
+ones (e.g. IMSI), causing significant implications on protocol stacks
+and implementations all across the protocol stack of all network elements,
+including the ME.
 
 No mechanism for increasing subscriber identity and location privacy on
 the radio interface has been specified for the previous cellular
