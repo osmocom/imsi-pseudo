@@ -280,8 +280,10 @@ The SIM applet registers to a suitable SMS trigger (3GPP TS 43.019, Section
 6.2). When an SMS from the HLR/HSS in the structure of <<sms-structure>> arrives,
 the applet must verify that the SMS is not outdated by comparing `imsi_pseudo_i`
 from the SMS with the last `imsi_pseudo_i` that was used when changing the IMSI
-(initially 1 as in <<hlr-imsi-pseudo-i>>). The new value must be higher,
-otherwise the SMS should not be processed further.
+(initially 1 as in <<hlr-imsi-pseudo-i>>). The new value must be higher. The
+SIM applet must also verify, that the pseudonymous IMSI arriving in the SMS is
+different from the currently active IMSI. If any of the checks fail, the SMS
+must not be processed further.
 
 The SIM applet registers a timer with `min_sleep_time` from the SMS. When the
 timer triggers, EF~IMSI~ of the SIM/USIM is overwritten with the new pseudonymous
