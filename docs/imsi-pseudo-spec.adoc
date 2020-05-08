@@ -303,7 +303,7 @@ An attacker could potentially block the next pseudonymous IMSI SMS on purpose.
 Because the SIM applet cannot decide the next pseudonymous IMSI, it would have
 the same pseudonymous IMSI for a long time. Then it could become feasible for
 an attacker to track the subscriber by their pseudonymous IMSI. Therefore the
-SIM applet should warn the subscriber if the pseudonymous IMSI does not change.
+SIM applet must warn the subscriber if the pseudonymous IMSI does not change.
 
 The SIM applet registers to EVENT_EVENT_DOWNLOAD_LOCATION_STATUS (3GPP TS
 03.19, Section 6.2) and increases `imsi_pseudo_lu` by 1 when the event is
@@ -428,7 +428,7 @@ IMSI_PSEUDO_I: 32 bits::
 See <<hlr-imsi-pseudo-i>>.
 
 MIN_SLEEP_TIME: 32 bits::
-Amount of seconds, which the SIM applet should wait before changing to the new
+Amount of seconds, which the SIM applet must wait before changing to the new
 pseudonymous IMSI. Since it is unclear when the SMS will arrive (ME might be
 turned off), this is a minimum amount.
 
@@ -437,7 +437,7 @@ Telephony Binary Coded Decimal (TBCD, 3GPP TS 29.002) version of the next
 pseudonymous IMSI.
 
 PAD: 8 bits::
-Padding at the end, should be filled with 1111 as in the TBCD specification.
+Padding at the end, must be filled with 1111 as in the TBCD specification.
 
 <<<
 == Error Scenarios
@@ -482,7 +482,7 @@ message on the Broadcast Control Channel (BCCH), see 3GPP TS 44.018 Section
 
 === End to End Encryption of SMS
 
-When deploying the IMSI pseudonymization, the operator should make sure that
+When deploying the IMSI pseudonymization, the operator must make sure that
 the next pseudonymous IMSI SMS (<<sms-structure>>) cannot be read or modified
 by third parties. Otherwise, the next pseudonymous IMSI is leaked, and if the
 pseudonymous IMSI in the SMS was changed, the SIM/USIM would be locked out of the
