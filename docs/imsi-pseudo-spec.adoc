@@ -297,6 +297,12 @@ to apply the new IMSI.
 // FIXME: do we need to enforce the LU now, with an arbitrary CM Service
 // Request, or would this only be necessary for Osmocom? (OS#4404)
 
+The SIM must start a Location Updating Request after changing the pseudonymous
+IMSI, so the CN does not try to contact the ME with the previous pseudonymous
+IMSI. The SIM applet must wait before switching the pseudonymous IMSI, because
+otherwise it would be possible for an attacker to correlate the arrival time of
+the SMS with the time of the following Location Updating Request.
+
 ===== Warning the Subscriber If the Pseudonymous IMSI Does Not Change
 
 An attacker could potentially block the next pseudonymous IMSI SMS on purpose.
