@@ -356,11 +356,12 @@ msc {
 ==== Update Location Request
 
 When Update Location Request arrives, the HLR/HSS does not look up the subscriber
-by the IMSI, but by the pseudonymous IMSI instead. Unless the subscriber has
-two pseudonymous IMSI allocated and used the new pseudonymous IMSI in the
-Update Location Request, this is followed by the existing logic to continue
-with Insert Subscriber Data Request.
+by the IMSI, but by the pseudonymous IMSI instead. If the subscriber has two
+pseudonymous IMSI allocated and used the new pseudonymous IMSI in the Update
+Location Request, <<ul-new-pseudo-imsi>> applies. Otherwise, the HLR continues
+with the existing Insert Subscriber Data Request logic.
 
+[[ul-new-pseudo-imsi]]
 ===== Update Location Request With New Pseudonymous IMSI
 
 If the subscriber has two pseudonymous IMSIs allocated, and the newer entry was
