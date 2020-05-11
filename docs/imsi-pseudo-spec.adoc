@@ -454,9 +454,8 @@ Padding at the end, must be filled with 1111 as in the TBCD specification.
 If the SMS with the next pseudonymous IMSI does not arrive, the SIM/USIM will start
 the next Location Updating Procedure with the old pseudonymous IMSI. Because
 the HLR/HSS has both the old and the new pseudonymous IMSI allocated at this point,
-the subscriber is not locked out of the network. The HLR/HSS does not deallocate
-the new pseudonymous IMSI that did not arrive, but instead send it again
-(<<next-pseudo-imsi-timer-expires>>).
+the subscriber is not locked out of the network. The HLR/HSS sends the same next
+pseudonymous IMSI again (<<next-pseudo-imsi-timer-expires>>).
 
 === Next Pseudonymous IMSI SMS Arrives Out of Order
 
