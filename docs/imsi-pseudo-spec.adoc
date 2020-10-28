@@ -141,18 +141,6 @@ msc {
   ME   => BTS [label="Authentication Response"];
   BTS  => BSC [label="Authentication Response"];
   BSC  => MSC [label="Authentication Response"];
-  BSC <=  MSC [label="Classmark Enquiry"];
-  BTS <=  BSC [label="Classmark Enquiry"];
-  ME  <=  BTS [label="Classmark Enquiry"];
-  ME   => BTS [label="Classmark Change"];
-  BTS  => BSC [label="Classmark Change"];
-  BSC  => MSC [label="Classmark Update"];
-  BSC <=  MSC [label="Physical Channel Reconfiguration"];
-  BTS <=  BSC [label="Ciphering Mode Command"];
-  ME  <=  BTS [label="Ciphering Mode Command"];
-  ME   => BTS [label="Ciphering Mode Complete"];
-  BTS  => BSC [label="Ciphering Mode Complete"];
-  BSC  => MSC [label="Ciphering Mode Complete"];
 
   --- [label="Process Update_Location_HLR (3GPP TS 29.002)"];
   MSC  => HLR [label="Update Location Request"];
